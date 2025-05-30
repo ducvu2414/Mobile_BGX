@@ -1,0 +1,51 @@
+{
+  "license": "0BSD",
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@expo/metro-runtime": "~5.0.4",
+    "@expo/vector-icons": "^14.1.0",
+    "@ptomasroos/react-native-multi-slider": "*",
+    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-native-community/datetimepicker": "^8.4.1",
+    "@react-native-community/slider": "^4.5.7",
+    "@react-native-google-signin/google-signin": "*",
+    "@react-native-picker/picker": "^2.11.0",
+    "@react-navigation/bottom-tabs": "^7.3.14",
+    "@react-navigation/native": "^7.1.10",
+    "@react-navigation/native-stack": "*",
+    "@react-navigation/stack": "^7.3.3",
+    "@reduxjs/toolkit": "*",
+    "@types/react": "*",
+    "axios": "*",
+    "expo": "~53.0.9",
+    "expo-linear-gradient": "~14.1.4",
+    "expo-status-bar": "~2.2.3",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-icons": "*",
+    "react-native": "0.79.2",
+    "react-native-gesture-handler": "~2.25.0",
+    "react-native-paper": "5.14.5",
+    "react-native-reanimated": "~3.18.0",
+    "react-native-safe-area-context": "^5.4.1",
+    "react-native-screens": "~4.11.1",
+    "react-native-svg": "^15.12.0",
+    "react-native-vector-icons": "*",
+    "react-native-web": "~0.20.0",
+    "react-redux": "*",
+    "redux": "*"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@expo/metro-config": "^0.20.14",
+    "@react-native-community/cli": "^18.0.0",
+    "babel-preset-expo": "^13.1.11"
+  },
+  "private": true
+}
