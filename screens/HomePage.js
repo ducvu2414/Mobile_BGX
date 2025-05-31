@@ -13,6 +13,7 @@ import {
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import Header from '../components/Header';
 import FeatureGrid from '../components/FeatureGrid';
+
 const { width } = Dimensions.get('window');
 
 const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcements, parkingAreas }) => {
@@ -27,17 +28,17 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
   }, []);
 
   const handleRegisterParking = useCallback(() => {
-    // Navigate to parking registration screen
     navigation.navigate('ParkingHistory');
   }, [navigation]);
 
+  // Tối ưu navigation calls
   const handleFeaturePress = useCallback((featureId) => {
     switch (featureId) {
       case 'membership':
-        navigation.navigate('Home', { screen: 'Membership' });
+        navigation.navigate('Membership');
         break;
       case 'parking-history':
-        navigation.navigate('Home', { screen: 'ParkingHistory' });
+        navigation.navigate('ParkingHistory');
         break;
       case 'wallet':
         navigation.navigate('Wallet');
@@ -45,6 +46,28 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
       case 'support':
         navigation.navigate('Profile', { screen: 'Help' });
         break;
+      default:
+        console.warn(`Unknown feature: ${featureId}`);
+    }
+  }, [navigation]);
+
+  // Wallet actions - navigate đến màn hình chung
+  const handleWalletAction = useCallback((action) => {
+    switch (action) {
+      case 'topup':
+        navigation.navigate('TopUp');
+        break;
+      case 'payment':
+        navigation.navigate('Payment');
+        break;
+      case 'withdraw':
+        navigation.navigate('Withdraw');
+        break;
+      case 'history':
+        navigation.navigate('TransactionHistory');
+        break;
+      default:
+        navigation.navigate('Wallet');
     }
   }, [navigation]);
 
@@ -55,7 +78,7 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
   const renderParkingArea = useCallback(({ item }) => (
     <TouchableOpacity
       style={styles.parkingItem}
-      onPress={() => navigation.navigate('Home', { screen: 'ParkingDetail', params: { parkingArea: item } })}
+      onPress={() => navigation.navigate('ParkingDetail', { parkingArea: item })}
     >
       <View style={styles.parkingInfo}>
         <View style={styles.parkingIconContainer}>
@@ -83,7 +106,6 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
     </TouchableOpacity>
   ), [navigation]);
 
-  // In your renderPromotionItem function
   const renderPromotionItem = useCallback(({ item }) => (
     <TouchableOpacity
       style={[styles.promotionCard, { backgroundColor: item.color }]}
@@ -111,29 +133,32 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        showsVerticalScrollIndicator={false}
       >
-
-
-        {/* Updated WalletCard with more wallet functionality */}
+        {/* Wallet Card với navigation được tối ưu */}
         <View style={styles.walletCardContainer}>
           <View style={styles.walletHeader}>
             <View style={styles.walletTitleContainer}>
               <MaterialIcons name="account-balance-wallet" size={20} color="#1565C0" />
               <Text style={styles.walletTitle}>Ví Điện Tử</Text>
             </View>
-            <TouchableOpacity onPress={() => navigation.navigate('Wallet')}>
+            <TouchableOpacity onPress={() => handleWalletAction('history')}>
               <Text style={styles.viewAllText}>Xem lịch sử</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.balanceContainer}>
             <Text style={styles.balanceLabel}>Số dư hiện tại</Text>
-            <Text style={styles.balanceAmount}>{formatCurrency(walletInfo?.balance || 0)}</Text>
+            <Text style={styles.balanceAmount}>
+              {formatCurrency(walletInfo?.balance || 0)}
+            </Text>
           </View>
+
           <View style={styles.actionButtons}>
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => navigation.navigate('Wallet', { screen: 'TopUp' })}
+              onPress={() => handleWalletAction('topup')}
+              activeOpacity={0.7}
             >
               <View style={[styles.actionIcon, { backgroundColor: '#E3F2FD' }]}>
                 <MaterialIcons name="add" size={24} color="#1565C0" />
@@ -143,7 +168,8 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
 
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => navigation.navigate('Wallet', { screen: 'Payment' })}
+              onPress={() => handleWalletAction('payment')}
+              activeOpacity={0.7}
             >
               <View style={[styles.actionIcon, { backgroundColor: '#E8F5E9' }]}>
                 <MaterialIcons name="payment" size={24} color="#4CAF50" />
@@ -153,7 +179,8 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
 
             <TouchableOpacity
               style={styles.actionButton}
-              onPress={() => navigation.navigate('Wallet', { screen: 'Withdraw' })}
+              onPress={() => handleWalletAction('withdraw')}
+              activeOpacity={0.7}
             >
               <View style={[styles.actionIcon, { backgroundColor: '#FFF3E0' }]}>
                 <MaterialIcons name="account-balance-wallet" size={24} color="#FF9800" />
@@ -165,11 +192,12 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
 
         <FeatureGrid onFeaturePress={handleFeaturePress} />
 
+        {/* Parking Areas Section */}
         {parkingAreas?.length > 0 && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Trạng thái bãi đỗ xe</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Home', { screen: 'ParkingMap' })}>
+              <TouchableOpacity onPress={() => navigation.navigate('ParkingMap')}>
                 <Text style={styles.viewAllText}>Xem bản đồ</Text>
               </TouchableOpacity>
             </View>
@@ -178,15 +206,17 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
               renderItem={renderParkingArea}
               keyExtractor={item => item.id.toString()}
               scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
             />
           </View>
         )}
 
+        {/* Promotions Section */}
         {promotions?.length > 0 && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Khuyến mãi</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Home', { screen: 'Promotions' })}>
+              <TouchableOpacity onPress={() => navigation.navigate('Promotions')}>
                 <Text style={styles.viewAllText}>Xem tất cả</Text>
               </TouchableOpacity>
             </View>
@@ -233,6 +263,7 @@ const styles = StyleSheet.create({
   viewAllText: {
     fontSize: 14,
     color: '#1565C0',
+    fontWeight: '500',
   },
   parkingItem: {
     backgroundColor: 'white',
@@ -375,6 +406,7 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 12,
     color: '#424242',
+    textAlign: 'center',
   },
 });
 

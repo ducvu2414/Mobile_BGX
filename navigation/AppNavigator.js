@@ -38,55 +38,33 @@ import ParkingDetailScreen from '../screens/ParkingDetailScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const WalletStackNavigator = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="WalletMain" component={WalletScreen} />
-      <Stack.Screen name="TopUp" component={TopUpScreen} />
-      <Stack.Screen name="Withdraw" component={WithdrawScreen} />
-      <Stack.Screen name="TransactionHistory" component={TransactionHistoryScreen} />
-      <Stack.Screen name="TransactionDetail" component={TransactionDetailScreen} />
-      <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
-      <Stack.Screen name="PaymentMethodDetail" component={PaymentMethodDetailScreen} />
-      <Stack.Screen name="AddPaymentMethod" component={AddPaymentMethodScreen} />
-      <Stack.Screen name="WalletSettings" component={WalletSettingsScreen} />
-      <Stack.Screen name="ChangePin" component={ChangePinScreen} />
-      <Stack.Screen name="Payment" component={PaymentScreen} />
-      <Stack.Screen name="PaymentSuccess" component={PaymentSuccessScreen} />
-    </Stack.Navigator>
-  );
+// Utility function để tạo reset listener cho tabs
+const createTabResetListener = (tabName, mainScreenName) => {
+  return ({ navigation, route }) => ({
+    tabPress: e => {
+      const isFocused = navigation.isFocused();
+      const currentRoute = route?.state?.routes?.[route.state.index]?.name;
+
+      if (isFocused && currentRoute !== mainScreenName) {
+        e.preventDefault();
+        navigation.navigate(tabName, { screen: mainScreenName });
+      }
+    },
+  });
 };
 
-const ProfileStackNavigator = () => {
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="ProfileMain" component={ProfileScreen} />
-      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-      <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
-      <Stack.Screen name="AppSettings" component={AppSettingsScreen} />
-      <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
-      <Stack.Screen name="Help" component={HelpScreen} />
-      <Stack.Screen name="About" component={AboutScreen} />
-      <Stack.Screen name="ParkingHistory" component={ParkingHistoryScreen} />
-      <Stack.Screen name="ChangePin" component={ChangePinScreen} />
-    </Stack.Navigator>
-  );
-};
+// Placeholder screens cho development
+const ParkingMapScreen = () => (
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text>Bản đồ đỗ xe</Text>
+  </View>
+);
 
-const HistoryScreen = () => <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Lịch sử đỗ xe</Text></View>;
-const ParkingMapScreen = () => <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Bản đồ đỗ xe</Text></View>;
-
-// Remove the duplicate import
-// import ParkingDetailScreen from '../screens/ParkingDetailScreen';
-
-// Trong HomeStackNavigator, thêm ParkingMapScreen vào danh sách các màn hình
+// Home Stack Navigator - chỉ chứa các màn hình riêng của Home
 const HomeStackNavigator = ({ studentInfo, walletInfo, promotions, announcements, parkingAreas }) => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        name="HomeMain"
-        options={{ headerShown: false }}
-      >
+      <Stack.Screen name="HomeMain" options={{ headerShown: false }}>
         {props => (
           <HomePage
             {...props}
@@ -99,50 +77,60 @@ const HomeStackNavigator = ({ studentInfo, walletInfo, promotions, announcements
         )}
       </Stack.Screen>
       <Stack.Screen name="Membership" component={MembershipScreen} />
-      <Stack.Screen name="Payment" component={PaymentScreen} />
-      <Stack.Screen name="PaymentSuccess" component={PaymentSuccessScreen} />
       <Stack.Screen name="ParkingHistory" component={ParkingHistoryScreen} />
-      <Stack.Screen name="ParkingHistoryDetail" component={ParkingHistoryDetailScreen} />
       <Stack.Screen name="Promotions" component={PromotionsScreen} />
       <Stack.Screen name="PromotionDetail" component={PromotionDetailScreen} />
       <Stack.Screen name="ParkingDetail" component={ParkingDetailScreen} />
-      <Stack.Screen name="ParkingMap" component={ParkingMapScreen} />
     </Stack.Navigator>
   );
 };
+
+// Wallet Stack Navigator - chỉ chứa màn hình chính của Wallet
+const WalletStackNavigator = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="WalletMain" component={WalletScreen} />
+      <Stack.Screen name="WalletSettings" component={WalletSettingsScreen} />
+    </Stack.Navigator>
+  );
+};
+
+// Profile Stack Navigator - chỉ chứa các màn hình riêng của Profile
+const ProfileStackNavigator = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="ProfileMain" component={ProfileScreen} />
+      <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+      <Stack.Screen name="AppSettings" component={AppSettingsScreen} />
+      <Stack.Screen name="Help" component={HelpScreen} />
+      <Stack.Screen name="About" component={AboutScreen} />
+    </Stack.Navigator>
+  );
+};
+
+// Tab Navigator
 const TabNavigator = ({ studentInfo, walletInfo, promotions, announcements, parkingAreas }) => {
-  const getResetListener = (tabName, mainScreenName) => {
-    return ({ navigation, route }) => ({
-      tabPress: e => {
-        const isFocused = navigation.isFocused();
-
-        // Nếu đang ở tab đó và không phải màn hình chính -> reset về màn chính
-        const currentRoute = route?.state?.routes?.[route.state.index]?.name;
-
-        if (isFocused && currentRoute !== mainScreenName) {
-          e.preventDefault();
-          navigation.navigate(tabName, {
-            screen: mainScreenName,
-          });
-        }
-      },
-    });
-  };
-
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
-          if (route.name === 'Home') {
-            iconName = 'home';
-          } else if (route.name === 'Wallet') {
-            iconName = 'account-balance-wallet';
-          } else if (route.name === 'Notifications') {
-            iconName = 'notifications';
-          } else if (route.name === 'Profile') {
-            iconName = 'person';
+          switch (route.name) {
+            case 'Home':
+              iconName = 'home';
+              break;
+            case 'Wallet':
+              iconName = 'account-balance-wallet';
+              break;
+            case 'Notifications':
+              iconName = 'notifications';
+              break;
+            case 'Profile':
+              iconName = 'person';
+              break;
+            default:
+              iconName = 'help';
           }
 
           return <MaterialIcons name={iconName} size={size} color={color} />;
@@ -155,7 +143,7 @@ const TabNavigator = ({ studentInfo, walletInfo, promotions, announcements, park
       <Tab.Screen
         name="Home"
         options={{ tabBarLabel: 'Trang chủ' }}
-        listeners={getResetListener('Home', 'HomeMain')}
+        listeners={createTabResetListener('Home', 'HomeMain')}
       >
         {props => (
           <HomeStackNavigator
@@ -173,36 +161,49 @@ const TabNavigator = ({ studentInfo, walletInfo, promotions, announcements, park
         name="Wallet"
         component={WalletStackNavigator}
         options={{ tabBarLabel: 'Ví' }}
-        listeners={getResetListener('Wallet', 'WalletMain')}
+        listeners={createTabResetListener('Wallet', 'WalletMain')}
       />
 
       <Tab.Screen
         name="Notifications"
         component={NotificationsScreen}
         options={{ tabBarLabel: 'Thông báo' }}
-      // Notifications là màn hình đơn -> không cần reset stack
       />
 
       <Tab.Screen
         name="Profile"
         component={ProfileStackNavigator}
         options={{ tabBarLabel: 'Tài khoản' }}
-        listeners={getResetListener('Profile', 'ProfileMain')}
+        listeners={createTabResetListener('Profile', 'ProfileMain')}
       />
     </Tab.Navigator>
   );
 };
 
-
+// Main App Navigator - chứa tất cả màn hình chung và luồng chính
 const AppNavigator = ({ studentInfo, walletInfo, promotions, announcements, parkingAreas }) => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerShown: false,
+          // Tối ưu performance
+          cardStyleInterpolator: ({ current }) => ({
+            cardStyle: {
+              opacity: current.progress,
+            },
+          }),
+        }}
+      >
+        {/* Authentication Flow */}
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen
-          name="Main"
-          options={{ headerShown: false }}
-        >
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
+        <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+
+        {/* Main App */}
+        <Stack.Screen name="Main" options={{ headerShown: false }}>
           {props => (
             <TabNavigator
               {...props}
@@ -214,26 +215,42 @@ const AppNavigator = ({ studentInfo, walletInfo, promotions, announcements, park
             />
           )}
         </Stack.Screen>
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
-        <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
-        <Stack.Screen name="ParkingHistoryDetail" component={ParkingHistoryDetailScreen} />
 
-        {/* Add wallet-related screens to the main stack */}
+        {/* Shared Screens - có thể truy cập từ nhiều tab */}
+        <Stack.Screen
+          name="PaymentMethods"
+          component={PaymentMethodsScreen}
+          options={{
+            presentation: 'modal', // Hiển thị như modal để UX tốt hơn
+          }}
+        />
+        <Stack.Screen name="PaymentMethodDetail" component={PaymentMethodDetailScreen} />
+        <Stack.Screen name="AddPaymentMethod" component={AddPaymentMethodScreen} />
+        <Stack.Screen name="ChangePin" component={ChangePinScreen} />
+
+        {/* Payment Flow */}
+        <Stack.Screen name="Payment" component={PaymentScreen} />
+        <Stack.Screen
+          name="PaymentSuccess"
+          component={PaymentSuccessScreen}
+          options={{
+            gestureEnabled: false, // Không cho phép swipe back
+          }}
+        />
+
+        {/* Wallet Operations */}
         <Stack.Screen name="TopUp" component={TopUpScreen} />
         <Stack.Screen name="Withdraw" component={WithdrawScreen} />
         <Stack.Screen name="TransactionHistory" component={TransactionHistoryScreen} />
         <Stack.Screen name="TransactionDetail" component={TransactionDetailScreen} />
-        <Stack.Screen name="PaymentMethods" component={PaymentMethodsScreen} />
-        <Stack.Screen name="PaymentMethodDetail" component={PaymentMethodDetailScreen} />
-        <Stack.Screen name="AddPaymentMethod" component={AddPaymentMethodScreen} />
-        <Stack.Screen name="WalletSettings" component={WalletSettingsScreen} />
-        <Stack.Screen name="ChangePin" component={ChangePinScreen} />
+
+        {/* Parking */}
         <Stack.Screen name="ParkingMap" component={ParkingMapScreen} />
+        <Stack.Screen name="ParkingHistoryDetail" component={ParkingHistoryDetailScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
 export default AppNavigator;
-
