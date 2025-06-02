@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     SafeAreaView,
     View,
@@ -10,23 +10,23 @@ import {
     ScrollView
 } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
 const ProfileScreen = ({ navigation }) => {
-    // Cập nhật dữ liệu mẫu cho thông tin người dùng với các trường mới
-    const [userInfo] = useState({
-        userCode: 'SV12345',
-        password: '',
-        name: 'Nguyễn Văn A',
-        phone: '0987654321',
-        email: 'nguyenvana@example.com',
-        gender: 'Nam',
-        dob: '01/01/2000',
-        address: 'Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội',
-        avatar: null, // URL hình ảnh đại diện
-        faculty: 'Công nghệ thông tin',
-        class: 'IT12345',
-        joinDate: '01/09/2022',
-    });
+    const user = useSelector(state => state.user);
+    console.log("User: ", user.userData.userData);
+
+    const userInfo = user.userData.userData || {
+        userCode: '',
+        name: '',
+        phoneNumber: '',
+        email: '',
+        gender: true,
+        dateOfBirth: '',
+        address: '',
+        role: '',
+        balance: 0
+    };
 
     const menuItems = [
         {
@@ -88,7 +88,6 @@ const ProfileScreen = ({ navigation }) => {
     ];
 
     const handleLogout = () => {
-        // Xử lý đăng xuất
         navigation.navigate('Login');
     };
 
@@ -109,14 +108,17 @@ const ProfileScreen = ({ navigation }) => {
                             <Image source={{ uri: userInfo.avatar }} style={styles.avatar} />
                         ) : (
                             <View style={styles.avatarPlaceholder}>
-                                <Text style={styles.avatarText}>{userInfo.name.charAt(0)}</Text>
+                                <Text style={styles.avatarText}>
+                                    {userInfo.name ? userInfo.name.charAt(0) : 'U'}
+                                </Text>
                             </View>
                         )}
                     </View>
                     <View style={styles.profileInfo}>
                         <Text style={styles.userName}>{userInfo.name}</Text>
-                        <Text style={styles.userDetail}>MSSV: {userInfo.userCode}</Text>
-                        <Text style={styles.userDetail}>{userInfo.faculty}</Text>
+                        <Text style={styles.userDetail}>Mã người dùng: {userInfo.userCode}</Text>
+                        <Text style={styles.userDetail}>Vai trò: {userInfo.role}</Text>
+                        <Text style={styles.userDetail}>Số dư: {userInfo.balance} VNĐ</Text>
                     </View>
                     <TouchableOpacity
                         style={styles.editButton}
@@ -141,7 +143,7 @@ const ProfileScreen = ({ navigation }) => {
                         <MaterialIcons name="phone" size={20} color="#1565C0" />
                         <View style={styles.detailContent}>
                             <Text style={styles.detailLabel}>Số điện thoại</Text>
-                            <Text style={styles.detailValue}>{userInfo.phone}</Text>
+                            <Text style={styles.detailValue}>{userInfo.phoneNumber}</Text>
                         </View>
                     </View>
 
@@ -149,7 +151,7 @@ const ProfileScreen = ({ navigation }) => {
                         <MaterialIcons name="person" size={20} color="#1565C0" />
                         <View style={styles.detailContent}>
                             <Text style={styles.detailLabel}>Giới tính</Text>
-                            <Text style={styles.detailValue}>{userInfo.gender}</Text>
+                            <Text style={styles.detailValue}>{userInfo.gender ? 'Nam' : 'Nữ'}</Text>
                         </View>
                     </View>
 
@@ -157,7 +159,9 @@ const ProfileScreen = ({ navigation }) => {
                         <MaterialIcons name="cake" size={20} color="#1565C0" />
                         <View style={styles.detailContent}>
                             <Text style={styles.detailLabel}>Ngày sinh</Text>
-                            <Text style={styles.detailValue}>{userInfo.dob}</Text>
+                            <Text style={styles.detailValue}>
+                                {new Date(userInfo.dateOfBirth).toLocaleDateString('vi-VN')}
+                            </Text>
                         </View>
                     </View>
 

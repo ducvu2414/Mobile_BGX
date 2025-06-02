@@ -7,7 +7,7 @@ const instance = axios.create({
   baseURL: API_URL || 'http://192.168.x.x:1014',
 });
 
-// instance.defaults.withCredentials = true;    // cho phép trao đổi cookie giữa client và server
+instance.defaults.withCredentials = true;    // cho phép trao đổi cookie giữa client và server
 
 // 👉 Lấy token đúng lúc gửi request
 instance.interceptors.request.use(async (config) => {
