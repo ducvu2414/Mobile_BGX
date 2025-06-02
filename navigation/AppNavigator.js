@@ -68,7 +68,6 @@ const HomeStackNavigator = ({ studentInfo, walletInfo, promotions, announcements
         {props => (
           <HomePage
             {...props}
-            studentInfo={studentInfo}
             walletInfo={walletInfo}
             promotions={promotions}
             announcements={announcements}
@@ -109,7 +108,7 @@ const ProfileStackNavigator = () => {
 };
 
 // Tab Navigator
-const TabNavigator = ({ studentInfo, walletInfo, promotions, announcements, parkingAreas }) => {
+const TabNavigator = ({ promotions, announcements, parkingAreas }) => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -148,8 +147,6 @@ const TabNavigator = ({ studentInfo, walletInfo, promotions, announcements, park
         {props => (
           <HomeStackNavigator
             {...props}
-            studentInfo={studentInfo}
-            walletInfo={walletInfo}
             promotions={promotions}
             announcements={announcements}
             parkingAreas={parkingAreas}
@@ -181,7 +178,7 @@ const TabNavigator = ({ studentInfo, walletInfo, promotions, announcements, park
 };
 
 // Main App Navigator - chứa tất cả màn hình chung và luồng chính
-const AppNavigator = ({ studentInfo, walletInfo, promotions, announcements, parkingAreas }) => {
+const AppNavigator = ({ promotions, announcements, parkingAreas }) => {
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -207,8 +204,6 @@ const AppNavigator = ({ studentInfo, walletInfo, promotions, announcements, park
           {props => (
             <TabNavigator
               {...props}
-              studentInfo={studentInfo}
-              walletInfo={walletInfo}
               promotions={promotions}
               announcements={announcements}
               parkingAreas={parkingAreas}

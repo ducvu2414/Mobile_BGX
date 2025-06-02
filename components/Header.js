@@ -5,7 +5,7 @@ import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 const Header = ({ studentInfo = {}, onRegisterParking }) => {
   const name = studentInfo?.name || 'User';
   const id = studentInfo?.id || '';
-  const className = studentInfo?.class || '';
+  const role = studentInfo?.role || '';
   const hasParking = studentInfo?.hasParking || false;
 
   return (
@@ -17,7 +17,7 @@ const Header = ({ studentInfo = {}, onRegisterParking }) => {
           </View>
           <View>
             <Text style={styles.greeting}>Xin chào, {name}</Text>
-            <Text style={styles.subGreeting}>{id} • {className}</Text>
+            <Text style={styles.subGreeting}>{id}{role}</Text>
           </View>
         </View>
         <TouchableOpacity>

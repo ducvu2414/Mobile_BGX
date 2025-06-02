@@ -124,8 +124,6 @@ const App = () => {
         <>
           <StatusBar barStyle="light-content" backgroundColor="#1565C0" />
           <AppNavigator
-            studentInfo={studentInfo}
-            walletInfo={walletInfo}
             promotions={promotions}
             announcements={announcements}
             parkingAreas={parkingAreas}

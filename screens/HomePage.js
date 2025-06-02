@@ -13,15 +13,29 @@ import {
 import { MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
 import Header from '../components/Header';
 import FeatureGrid from '../components/FeatureGrid';
+import { useSelector } from 'react-redux';
 
 const { width } = Dimensions.get('window');
 
-const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcements, parkingAreas }) => {
+const HomePage = ({ navigation, promotions, announcements, parkingAreas }) => {
   const [refreshing, setRefreshing] = useState(false);
+
+  // Lấy user từ Redux
+  const user = useSelector(state => state.user);
+  const userInfo = user.userData.userData || {
+    userCode: '',
+    name: '',
+    phoneNumber: '',
+    email: '',
+    gender: true,
+    dateOfBirth: '',
+    address: '',
+    role: '',
+    balance: 0
+  };
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    // Simulate data fetching
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -31,7 +45,6 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
     navigation.navigate('ParkingHistory');
   }, [navigation]);
 
-  // Tối ưu navigation calls
   const handleFeaturePress = useCallback((featureId) => {
     switch (featureId) {
       case 'membership':
@@ -51,7 +64,6 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
     }
   }, [navigation]);
 
-  // Wallet actions - navigate đến màn hình chung
   const handleWalletAction = useCallback((action) => {
     switch (action) {
       case 'topup':
@@ -123,7 +135,7 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1565C0" />
       <Header
-        studentInfo={studentInfo}
+        studentInfo={userInfo}
         onRegisterParking={handleRegisterParking}
         navigation={navigation}
       />
@@ -135,7 +147,7 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* Wallet Card với navigation được tối ưu */}
+        {/* Wallet Card */}
         <View style={styles.walletCardContainer}>
           <View style={styles.walletHeader}>
             <View style={styles.walletTitleContainer}>
@@ -150,7 +162,7 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
           <View style={styles.balanceContainer}>
             <Text style={styles.balanceLabel}>Số dư hiện tại</Text>
             <Text style={styles.balanceAmount}>
-              {formatCurrency(walletInfo?.balance || 0)}
+              {formatCurrency(userInfo.balance || 0)}
             </Text>
           </View>
 
@@ -192,7 +204,6 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
 
         <FeatureGrid onFeaturePress={handleFeaturePress} />
 
-        {/* Parking Areas Section */}
         {parkingAreas?.length > 0 && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
@@ -211,7 +222,6 @@ const HomePage = ({ navigation, studentInfo, walletInfo, promotions, announcemen
           </View>
         )}
 
-        {/* Promotions Section */}
         {promotions?.length > 0 && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
