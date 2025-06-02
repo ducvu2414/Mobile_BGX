@@ -174,20 +174,12 @@ const WalletScreen = ({ navigation }) => {
         <View style={styles.actionsContainer}>
           {[
             { icon: 'add', label: 'Nạp tiền', onPress: () => navigation.navigate('TopUp') },
-            { icon: 'account-balance-wallet', label: 'Rút tiền', onPress: () => navigation.navigate('Withdraw'), iconType: 'MaterialIcons' },
-            {
-              icon: 'payment',
-              label: 'Thanh toán',
-              onPress: () => navigation.navigate('Payment')
-            }
+            { icon: 'account-balance-wallet', label: 'Rút tiền', onPress: () => navigation.navigate('Withdraw') },
+            { icon: 'payment', label: 'Thanh toán', onPress: () => navigation.navigate('Payment') }
           ].map((action, index) => (
             <TouchableOpacity key={index} style={styles.actionButton} onPress={action.onPress}>
               <View style={styles.actionIcon}>
-                {action.iconType === 'MaterialCommunityIcons' ? (
-                  <MaterialCommunityIcons name={action.icon} size={20} color="white" />
-                ) : (
-                  <MaterialIcons name={action.icon} size={20} color="white" />
-                )}
+                <MaterialIcons name={action.icon} size={20} color="white" />
               </View>
               <Text style={styles.actionText}>{action.label}</Text>
             </TouchableOpacity>
@@ -237,8 +229,8 @@ const WalletScreen = ({ navigation }) => {
       <View style={styles.quickServicesGrid}>
         {[
           { icon: 'receipt-long', screen: 'TransactionHistory', label: 'Hóa đơn', color: '#E3F2FD', iconColor: '#1565C0' },
-          { icon: 'local-offer', screen: 'HomeStack', params: { screen: 'Membership' }, label: 'Gói đỗ xe', color: '#E8F5E9', iconColor: '#4CAF50' },
-          { icon: 'card-giftcard', screen: 'HomeStack', params: { screen: 'Promotions' }, label: 'Khuyến mãi', color: '#FFF3E0', iconColor: '#FF9800' },
+          { icon: 'local-offer', screen: 'Home', params: { screen: 'Membership' }, label: 'Gói đỗ xe', color: '#E8F5E9', iconColor: '#4CAF50' },
+          { icon: 'card-giftcard', screen: 'Home', params: { screen: 'Promotions' }, label: 'Khuyến mãi', color: '#FFF3E0', iconColor: '#FF9800' },
           { icon: 'history', screen: 'TransactionHistory', label: 'Lịch sử', color: '#FCE4EC', iconColor: '#E91E63' }
         ].map((service, index) => (
           <TouchableOpacity

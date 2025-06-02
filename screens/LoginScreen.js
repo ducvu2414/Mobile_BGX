@@ -8,44 +8,70 @@ import {
   StatusBar,
   Image,
   ScrollView,
-  Alert
+  Alert,
+  ToastAndroid
 } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, useNavigation } from '@react-navigation/native';
+import { login } from '../redux/slice/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginEmployee, loginUser } from '../services/userServices';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Toast } from 'toastify-react-native';
+
 
 const LoginScreen = ({ navigation }) => {
+  const user = useSelector(state => state.user);
+  const dispatch = useDispatch();
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isValidusername, setIsValidusername] = useState(true);
+  const [isValidPassword, setIsValidPassword] = useState(true);
+  const [whoIsLogging, setWhoIsLogging] = useState('Client');
 
   const handleLogin = async () => {
     try {
-      // Kiểm tra đầu vào
-      // if (!username.trim()) {
-      //   Alert.alert('Thông báo', 'Vui lòng nhập mã người dùng');
-      //   return;
-      // }
+      setIsValidusername(true)
+      setIsValidPassword(true)
+      if (!username) {
+        Toast.error('Vui lòng điền đầy đủ thông tin')
+        setError('Vui lòng điền đầy đủ thông tin')
+        setIsValidusername(false);
+        return;
+      }
+      if (!password) {
+        Toast.error('Vui lòng điền đầy đủ thông tin')
+        setError('Vui lòng điền đầy đủ thông tin')
+        setIsValidPassword(false);
+        return;
+      }
+      let response = await loginUser(username, password, whoIsLogging);
 
-      // if (!password.trim()) {
-      //   Alert.alert('Thông báo', 'Vui lòng nhập mật khẩu');
-      //   return;
-      // }
+      if (response && +response.EC === 1) {
+        let groupWithRoles = response.DT.groupWithRoles
+        let userData = response.DT.userData
+        let token = response.DT.access_token
+        let data = {
+          isAuthenticated: true,
+          token: token,
+          account: { groupWithRoles },
+          userData: userData,
+        }
+        console.log('data', data);
 
-      // Mô phỏng đăng nhập thành công
-      // Trong ứng dụng thực tế, bạn sẽ gọi API đăng nhập ở đây
-      // if (username === 'admin' && password === 'admin') {
-      //   navigation.dispatch(
-      //     CommonActions.reset({
-      //       index: 0,
-      //       routes: [{ name: 'Main' }],
-      //     })
-      //   );
-      navigation.navigate('Main');
-      // } else {
-      //   Alert.alert('Thông báo', 'Mã người dùng hoặc mật khẩu không đúng');
-      // }
+        Toast.success(response.EM);
+        await AsyncStorage.setItem('jwt', token);
+
+        dispatch(login(data));
+        navigation.navigate('Main');
+      } else {
+        Toast.error(response.EM);
+      }
     } catch (error) {
-      Alert.alert('Lỗi', 'Đăng nhập thất bại, vui lòng thử lại sau');
+      Toast.error('Login failed, check network and try again');
     }
   };
 

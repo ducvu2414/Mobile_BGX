@@ -1,6 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { StatusBar } from 'react-native';
 import AppNavigator from './navigation/AppNavigator';
+import ToastManager from 'toastify-react-native/components/ToastManager';
+import { Provider } from 'react-redux';
+import { store } from './redux/store/store';
+import { persistor } from './redux/store/store';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const App = () => {
   const parkingAreas = useMemo(() => [
@@ -114,16 +119,21 @@ const App = () => {
   }), []);
 
   return (
-    <>
-      <StatusBar barStyle="light-content" backgroundColor="#1565C0" />
-      <AppNavigator
-        studentInfo={studentInfo}
-        walletInfo={walletInfo}
-        promotions={promotions}
-        announcements={announcements}
-        parkingAreas={parkingAreas}
-      />
-    </>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <>
+          <StatusBar barStyle="light-content" backgroundColor="#1565C0" />
+          <AppNavigator
+            studentInfo={studentInfo}
+            walletInfo={walletInfo}
+            promotions={promotions}
+            announcements={announcements}
+            parkingAreas={parkingAreas}
+          />
+          <ToastManager />
+        </>
+      </PersistGate>
+    </Provider>
   );
 };
 
