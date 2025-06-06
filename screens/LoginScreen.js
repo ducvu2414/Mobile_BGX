@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -8,8 +8,6 @@ import {
   StatusBar,
   Image,
   ScrollView,
-  Alert,
-  ToastAndroid
 } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { CommonActions, useNavigation } from '@react-navigation/native';
@@ -17,8 +15,9 @@ import { login } from '../redux/slice/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginEmployee, loginUser } from '../services/userServices';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Toast } from 'toastify-react-native';
-
+import Toast from 'react-native-toast-message';
+import { BackHandler } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 const LoginScreen = ({ navigation }) => {
   const user = useSelector(state => state.user);
@@ -37,13 +36,19 @@ const LoginScreen = ({ navigation }) => {
       setIsValidusername(true)
       setIsValidPassword(true)
       if (!username) {
-        Toast.error('Vui lòng điền đầy đủ thông tin')
+        Toast.show({
+          type: 'error',
+          text1: 'Vui lòng điền đầy đủ thông tin',
+        });
         setError('Vui lòng điền đầy đủ thông tin')
         setIsValidusername(false);
         return;
       }
       if (!password) {
-        Toast.error('Vui lòng điền đầy đủ thông tin')
+        Toast.show({
+          type: 'error',
+          text1: 'Vui lòng điền đầy đủ thông tin',
+        });
         setError('Vui lòng điền đầy đủ thông tin')
         setIsValidPassword(false);
         return;
@@ -60,18 +65,29 @@ const LoginScreen = ({ navigation }) => {
           account: { groupWithRoles },
           userData: userData,
         }
-        console.log('data', data);
-
-        Toast.success(response.EM);
+        Toast.show({
+          type: 'success',
+          text1: response.EM,
+        });
         await AsyncStorage.setItem('jwt', token);
 
         dispatch(login(data));
-        navigation.navigate('Main');
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [{ name: 'Main' }],
+        // });
+
       } else {
-        Toast.error(response.EM);
+        Toast.show({
+          type: 'error',
+          text1: response.EM,
+        });
       }
     } catch (error) {
-      Toast.error('Login failed, check network and try again');
+      Toast.show({
+        type: 'error',
+        text1: 'Login failed, check network and try again',
+      });
     }
   };
 
@@ -82,6 +98,25 @@ const LoginScreen = ({ navigation }) => {
   const handleChangePassword = () => {
     navigation.navigate('VerifyCode', { email: 'user@example.com' });
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        return true;
+      };
+
+      const backHandler = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => backHandler.remove();
+
+
+    }, [])
+  );
+
+  useEffect(() => {
+    navigation.setOptions({
+      gestureEnabled: false,
+    });
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>

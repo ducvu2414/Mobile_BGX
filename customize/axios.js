@@ -1,13 +1,16 @@
 import axios from "axios";
-import { Toast } from 'toastify-react-native';  // chỉ cần import Toast
+import Toast from 'react-native-toast-message';
+import {
+  Alert
+} from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from '@env';
 
 const instance = axios.create({
-  baseURL: API_URL || 'http://192.168.x.x:1014',
+  baseURL: API_URL || 'http://192.168.1.3:1014',
 });
 
-instance.defaults.withCredentials = true;    // cho phép trao đổi cookie giữa client và server
+instance.defaults.withCredentials = true;
 
 // 👉 Lấy token đúng lúc gửi request
 instance.interceptors.request.use(async (config) => {
@@ -27,11 +30,17 @@ instance.interceptors.response.use((response) => {
   const status = err && err.response && err.response.status || 500;
   switch (status) {
     case 401: {
-      Toast.error('Vui lòng đăng nhập trước.');
+      Toast.show({
+        type: 'error',
+        text1: 'Vui lòng đăng nhập trước.',
+      });
       return err.response.data;
     }
     case 403: {
-      Toast.error('Bạn không có quyền truy cập');
+      Toast.show({
+        type: 'error',
+        text1: 'Bạn không có quyền truy cập',
+      });
       console.log('unexpected error 403');
       return Promise.reject(err);
     }

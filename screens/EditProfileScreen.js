@@ -1,81 +1,87 @@
 import React, { useState } from 'react';
 import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  StatusBar,
-  TextInput,
-  ScrollView,
-  Image,
-  Alert
+  SafeAreaView, View, Text, StyleSheet, TouchableOpacity,
+  StatusBar, TextInput, ScrollView, Image, Alert
 } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
+import { logoutUser, updateCurrentUser } from '../services/userServices';
+import Toast from 'react-native-toast-message';
 
 const EditProfileScreen = ({ navigation }) => {
-  // Dữ liệu mẫu cho thông tin người dùng
-  const [userInfo, setUserInfo] = useState({
-    id: '123456',
-    name: 'Nguyễn Văn A',
-    studentId: 'SV12345',
-    email: 'nguyenvana@example.com',
-    phone: '0987654321',
-    avatar: null, // URL hình ảnh đại diện
-    faculty: 'Công nghệ thông tin',
-    class: 'IT12345',
-    joinDate: '01/09/2022',
-  });
+  const user = useSelector(state => state.user);
+  const userInfo = user.userData.userData || {};
 
-  const [name, setName] = useState(userInfo.name);
-  const [email, setEmail] = useState(userInfo.email);
-  const [phone, setPhone] = useState(userInfo.phone);
+  const [name, setName] = useState(userInfo.name || '');
+  const [email, setEmail] = useState(userInfo.email || '');
+  const [phoneNumber, setPhoneNumber] = useState(userInfo.phoneNumber || '');
+  const [password, setPassword] = useState('');
 
-  const handleSave = () => {
-    // Validate inputs
-    if (!name.trim()) {
-      Alert.alert('Lỗi', 'Vui lòng nhập họ tên');
+  const handleSave = async () => {
+    // Validate
+    const emailRegex = /^[a-zA-Z0-9._%+-]{5,16}@gmail\.com$/;
+    const phoneRegex = /^0\d{9}$/;
+    const passwordRegex = /^.{7,16}$/;
+    if (!name.trim() || !email.trim() || !phoneNumber.trim() || !password.trim()) {
+      Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin và xác minh bằng mật khẩu');
+      Toast.show({
+        type: 'error',
+        text1: 'Vui lòng nhập đầy đủ thông tin và xác minh bằng mật khẩu',
+      });
       return;
     }
 
-    if (!email.trim()) {
-      Alert.alert('Lỗi', 'Vui lòng nhập email');
+    if (!emailRegex.test(email)) {
+      Alert.alert('Lỗi', 'Email không hợp lệ. Vui lòng sử dụng định dạng @gmail.com');
       return;
     }
 
-    if (!phone.trim()) {
-      Alert.alert('Lỗi', 'Vui lòng nhập số điện thoại');
+    if (!phoneRegex.test(phoneNumber)) {
+      Alert.alert('Lỗi', 'Số điện thoại không hợp lệ');
       return;
     }
 
-    // Update user info
-    const updatedUserInfo = {
-      ...userInfo,
-      name,
-      email,
-      phone,
-    };
+    if (!passwordRegex.test(password)) {
+      Alert.alert('Lỗi', 'Mật khẩu cần từ 7-16 ký tự');
+      return;
+    }
 
-    // In a real app, you would send this data to the server
-    // For this demo, we'll just update the local state
-    setUserInfo(updatedUserInfo);
+    try {
+      const updatedUser = {
+        userCode: userInfo.userCode,
+        email,
+        phoneNumber,
+        password,
+      };
 
-    Alert.alert(
-      'Thành công',
-      'Thông tin cá nhân đã được cập nhật',
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.goBack(),
-        },
-      ]
-    );
+      const res = await updateCurrentUser(updatedUser);
+      if (res && res.EC === 0) {
+        Alert.alert('Thành công', 'Cập nhật thành công. Bạn sẽ được đăng xuất.', [
+          {
+            text: 'OK',
+            onPress: async () => {
+              await logoutUser();
+              navigation.replace('Login');
+            }
+          }
+        ]);
+      } else {
+        Alert.alert('Lỗi', res.EM || 'Cập nhật thất bại');
+      }
+    } catch (err) {
+      Alert.alert('Lỗi', 'Đã có lỗi xảy ra khi cập nhật');
+    }
   };
 
-  const handleChangeAvatar = () => {
-    // In a real app, you would implement image picker functionality
-    Alert.alert('Thông báo', 'Chức năng đang được phát triển');
+  const formatDate = (isoString) => {
+    if (!isoString) return '';
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -91,90 +97,84 @@ const EditProfileScreen = ({ navigation }) => {
       <ScrollView style={styles.content}>
         <View style={styles.avatarSection}>
           <View style={styles.avatarContainer}>
-            {userInfo.avatar ? (
-              <Image source={{ uri: userInfo.avatar }} style={styles.avatar} />
+            {userInfo.avatarUrl ? (
+              <Image source={{ uri: userInfo.avatarUrl }} style={styles.avatar} />
             ) : (
               <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarText}>{userInfo.name.charAt(0)}</Text>
+                <Text style={styles.avatarText}>{name?.charAt(0) || 'U'}</Text>
               </View>
             )}
           </View>
-          <TouchableOpacity
-            style={styles.changeAvatarButton}
-            onPress={handleChangeAvatar}
-          >
+          <TouchableOpacity onPress={() => Alert.alert('Thông báo', 'Chức năng đang phát triển')}>
             <Text style={styles.changeAvatarText}>Thay đổi ảnh đại diện</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.formContainer}>
           <View style={styles.formGroup}>
-            <Text style={styles.label}>Họ và tên</Text>
-            <TextInput
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-              placeholder="Nhập họ và tên"
-            />
+            <Text style={styles.label}>Mã người dùng</Text>
+            <TextInput style={[styles.input, styles.disabledInput]} value={userInfo.userCode} editable={false} />
           </View>
 
           <View style={styles.formGroup}>
-            <Text style={styles.label}>MSSV</Text>
-            <TextInput
-              style={[styles.input, styles.disabledInput]}
-              value={userInfo.studentId}
-              editable={false}
-            />
-            <Text style={styles.helperText}>Mã số sinh viên không thể thay đổi</Text>
+            <Text style={styles.label}>Họ và tên</Text>
+            <TextInput style={[styles.input, styles.disabledInput]} value={name} editable={false} />
           </View>
 
           <View style={styles.formGroup}>
             <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Nhập email"
-              keyboardType="email-address"
-            />
+            <TextInput style={styles.input} value={email} onChangeText={setEmail} keyboardType="email-address" />
           </View>
 
           <View style={styles.formGroup}>
             <Text style={styles.label}>Số điện thoại</Text>
+            <TextInput style={styles.input} value={phoneNumber} onChangeText={setPhoneNumber} keyboardType="phone-pad" />
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Giới tính</Text>
+            <TextInput
+              style={[styles.input, styles.disabledInput]}
+              value={userInfo.gender === true || userInfo.gender === 'Nam' ? 'Nam' : 'Nữ'}
+              editable={false}
+            />
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Ngày sinh</Text>
+            <TextInput
+              style={[styles.input, styles.disabledInput]}
+              value={formatDate(userInfo.dateOfBirth)}
+              editable={false}
+            />
+          </View>
+
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Địa chỉ</Text>
+            <TextInput style={[styles.input, styles.disabledInput]} value={userInfo.address} editable={false} />
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Chức vụ</Text>
+            <TextInput style={[styles.input, styles.disabledInput]} value={userInfo.role} editable={false} />
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Nhập mật khẩu để xác minh</Text>
             <TextInput
               style={styles.input}
-              value={phone}
-              onChangeText={setPhone}
-              placeholder="Nhập số điện thoại"
-              keyboardType="phone-pad"
-            />
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Khoa</Text>
-            <TextInput
-              style={[styles.input, styles.disabledInput]}
-              value={userInfo.faculty}
-              editable={false}
-            />
-          </View>
-
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Lớp</Text>
-            <TextInput
-              style={[styles.input, styles.disabledInput]}
-              value={userInfo.class}
-              editable={false}
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Nhập password để xác minh"
+              secureTextEntry
             />
           </View>
         </View>
       </ScrollView>
 
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.saveButton}
-          onPress={handleSave}
-        >
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
           <Text style={styles.saveButtonText}>Lưu thay đổi</Text>
         </TouchableOpacity>
       </View>

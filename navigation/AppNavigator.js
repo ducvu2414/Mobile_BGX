@@ -5,6 +5,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 
+import { useSelector } from 'react-redux';
+
+
 import HomePage from '../screens/HomePage';
 import WalletScreen from '../screens/WalletScreen';
 import MembershipScreen from '../screens/MembershipScreen';
@@ -179,13 +182,12 @@ const TabNavigator = ({ promotions, announcements, parkingAreas }) => {
 
 // Main App Navigator - chứa tất cả màn hình chung và luồng chính
 const AppNavigator = ({ promotions, announcements, parkingAreas }) => {
+  const isLoggedIn = useSelector(state => state.user.isAuthenticated);
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Login"
         screenOptions={{
           headerShown: false,
-          // Tối ưu performance
           cardStyleInterpolator: ({ current }) => ({
             cardStyle: {
               opacity: current.progress,
@@ -193,56 +195,51 @@ const AppNavigator = ({ promotions, announcements, parkingAreas }) => {
           }),
         }}
       >
-        {/* Authentication Flow */}
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
-        <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+        {/* Nếu chưa đăng nhập => hiển thị Auth screens */}
+        {!isLoggedIn ? (
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+            <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
+            <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+          </>
+        ) : (
+          <>
+            {/* Main App sau khi đăng nhập */}
+            <Stack.Screen name="Main">
+              {props => (
+                <TabNavigator
+                  {...props}
+                  promotions={promotions}
+                  announcements={announcements}
+                  parkingAreas={parkingAreas}
+                />
+              )}
+            </Stack.Screen>
 
-        {/* Main App */}
-        <Stack.Screen name="Main" options={{ headerShown: false }}>
-          {props => (
-            <TabNavigator
-              {...props}
-              promotions={promotions}
-              announcements={announcements}
-              parkingAreas={parkingAreas}
+            {/* Các màn hình dùng chung */}
+            <Stack.Screen
+              name="PaymentMethods"
+              component={PaymentMethodsScreen}
+              options={{ presentation: 'modal' }}
             />
-          )}
-        </Stack.Screen>
-
-        {/* Shared Screens - có thể truy cập từ nhiều tab */}
-        <Stack.Screen
-          name="PaymentMethods"
-          component={PaymentMethodsScreen}
-          options={{
-            presentation: 'modal', // Hiển thị như modal để UX tốt hơn
-          }}
-        />
-        <Stack.Screen name="PaymentMethodDetail" component={PaymentMethodDetailScreen} />
-        <Stack.Screen name="AddPaymentMethod" component={AddPaymentMethodScreen} />
-        <Stack.Screen name="ChangePin" component={ChangePinScreen} />
-
-        {/* Payment Flow */}
-        <Stack.Screen name="Payment" component={PaymentScreen} />
-        <Stack.Screen
-          name="PaymentSuccess"
-          component={PaymentSuccessScreen}
-          options={{
-            gestureEnabled: false, // Không cho phép swipe back
-          }}
-        />
-
-        {/* Wallet Operations */}
-        <Stack.Screen name="TopUp" component={TopUpScreen} />
-        <Stack.Screen name="Withdraw" component={WithdrawScreen} />
-        <Stack.Screen name="TransactionHistory" component={TransactionHistoryScreen} />
-        <Stack.Screen name="TransactionDetail" component={TransactionDetailScreen} />
-
-        {/* Parking */}
-        <Stack.Screen name="ParkingMap" component={ParkingMapScreen} />
-        <Stack.Screen name="ParkingHistoryDetail" component={ParkingHistoryDetailScreen} />
-
+            <Stack.Screen name="PaymentMethodDetail" component={PaymentMethodDetailScreen} />
+            <Stack.Screen name="AddPaymentMethod" component={AddPaymentMethodScreen} />
+            <Stack.Screen name="ChangePin" component={ChangePinScreen} />
+            <Stack.Screen name="Payment" component={PaymentScreen} />
+            <Stack.Screen
+              name="PaymentSuccess"
+              component={PaymentSuccessScreen}
+              options={{ gestureEnabled: false }}
+            />
+            <Stack.Screen name="TopUp" component={TopUpScreen} />
+            <Stack.Screen name="Withdraw" component={WithdrawScreen} />
+            <Stack.Screen name="TransactionHistory" component={TransactionHistoryScreen} />
+            <Stack.Screen name="TransactionDetail" component={TransactionDetailScreen} />
+            <Stack.Screen name="ParkingMap" component={ParkingMapScreen} />
+            <Stack.Screen name="ParkingHistoryDetail" component={ParkingHistoryDetailScreen} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -11,10 +11,16 @@ import {
 } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
+import { logoutUser } from '../services/userServices';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
+import { logout } from '../redux/slice/userSlice';
+import { useDispatch } from 'react-redux'
 
 const ProfileScreen = ({ navigation }) => {
+    const dispatch = useDispatch();
     const user = useSelector(state => state.user);
-    console.log("User: ", user.userData.userData);
+    // console.log("User: ", user.userData.userData);
 
     const userInfo = user.userData.userData || {
         userCode: '',
@@ -87,9 +93,22 @@ const ProfileScreen = ({ navigation }) => {
         }
     ];
 
-    const handleLogout = () => {
-        navigation.navigate('Login');
-    };
+    const handleLogout = async () => {
+        let data = await logoutUser();
+        AsyncStorage.clear();
+        dispatch(logout());
+        if (data && +data.EC === 1) {
+            Toast.show({
+                type: 'success',
+                text1: 'Đăng xuất thành công',
+            });
+        } else {
+            Toast.show({
+                type: 'error',
+                text1: 'Đăng xuất thất bại',
+            });
+        }
+    }
 
     return (
         <SafeAreaView style={styles.container}>
