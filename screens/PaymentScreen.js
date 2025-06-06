@@ -12,15 +12,28 @@ import {
   Image
 } from 'react-native';
 import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
 
 const PaymentScreen = ({ navigation, route }) => {
+  const user = useSelector(state => state.user);
+  const userInfo = user.userData.userData || {
+    userCode: '',
+    name: '',
+    phoneNumber: '',
+    email: '',
+    gender: true,
+    dateOfBirth: '',
+    address: '',
+    role: '',
+    balance: 0
+  };
   const [amount, setAmount] = useState(route.params?.amount || '');
   const [note, setNote] = useState(route.params?.description || '');
   const [paymentType, setPaymentType] = useState(route.params?.type || 'general');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
 
-  const walletBalance = 256000; // Giả định số dư ví
+  const walletBalance = userInfo.balance;
 
   // Danh sách gói thanh toán
   const paymentPackages = {

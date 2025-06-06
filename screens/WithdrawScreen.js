@@ -11,8 +11,22 @@ import {
     Alert
 } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { useSelector } from 'react-redux';
+
 
 const WithdrawScreen = ({ navigation }) => {
+    const user = useSelector(state => state.user);
+    const userInfo = user.userData.userData || {
+        userCode: '',
+        name: '',
+        phoneNumber: '',
+        email: '',
+        gender: true,
+        dateOfBirth: '',
+        address: '',
+        role: '',
+        balance: 0
+    };
     const [amount, setAmount] = useState('');
     const [selectedMethod, setSelectedMethod] = useState(null);
 
@@ -41,7 +55,8 @@ const WithdrawScreen = ({ navigation }) => {
     ];
 
     const quickAmounts = [50000, 100000, 200000, 500000];
-    const walletBalance = 1250000; // Giả định số dư ví
+    const walletBalance = userInfo.balance;
+
 
     const handleWithdraw = () => {
         if (!amount || parseInt(amount) < 50000) {
