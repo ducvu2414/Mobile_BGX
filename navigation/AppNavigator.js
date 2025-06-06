@@ -37,6 +37,7 @@ import ChangePasswordScreen from '../screens/ChangePasswordScreen';
 import PromotionsScreen from '../screens/PromotionsScreen';
 import PromotionDetailScreen from '../screens/PromotionDetailScreen';
 import ParkingDetailScreen from '../screens/ParkingDetailScreen';
+import ForgotChangePasswordScreen from '../screens/ForgotChangePasswordScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -201,7 +202,7 @@ const AppNavigator = ({ promotions, announcements, parkingAreas }) => {
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
             <Stack.Screen name="VerifyCode" component={VerifyCodeScreen} />
-            <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
+            <Stack.Screen name="ForgotChangePassword" component={ForgotChangePasswordScreen} />
           </>
         ) : (
           <>
@@ -226,6 +227,7 @@ const AppNavigator = ({ promotions, announcements, parkingAreas }) => {
             <Stack.Screen name="PaymentMethodDetail" component={PaymentMethodDetailScreen} />
             <Stack.Screen name="AddPaymentMethod" component={AddPaymentMethodScreen} />
             <Stack.Screen name="ChangePin" component={ChangePinScreen} />
+            <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
             <Stack.Screen name="Payment" component={PaymentScreen} />
             <Stack.Screen
               name="PaymentSuccess"

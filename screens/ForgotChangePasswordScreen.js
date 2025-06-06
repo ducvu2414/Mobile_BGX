@@ -11,36 +11,16 @@ import {
   Alert
 } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
-import { updatePasswordUser } from '../services/userServices';
-import { useSelector } from 'react-redux';
 
 const ChangePasswordScreen = ({ navigation, route }) => {
-  const user = useSelector(state => state.user);
-  const userInfo = user.userData.userData || {};
-
-  const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleChangePassword = async () => {
-    const regexPwd = /^[\s\S]{7,16}$/;
-    const userCode = userInfo.userCode || '';
-
-    if (!oldPassword.trim()) {
-      Alert.alert('Thông báo', 'Vui lòng nhập mật khẩu cũ');
-      return;
-    }
-
+  const handleChangePassword = () => {
     if (!newPassword.trim()) {
       Alert.alert('Thông báo', 'Vui lòng nhập mật khẩu mới');
-      return;
-    }
-
-    if (!regexPwd.test(newPassword)) {
-      Alert.alert('Thông báo', 'Mật khẩu mới phải từ 7 đến 16 ký tự');
       return;
     }
 
@@ -54,20 +34,18 @@ const ChangePasswordScreen = ({ navigation, route }) => {
       return;
     }
 
-    if (oldPassword === newPassword) {
-      Alert.alert('Thông báo', 'Mật khẩu mới không được trùng mật khẩu cũ');
-      return;
-    }
-
-
-    const response = await updatePasswordUser({ userCode, oldPassword, password: newPassword });
-    if (response?.EC === 1) {
-      Alert.alert('Thành công', response.EM, [
-        { text: 'Đăng nhập', onPress: () => navigation.navigate('Login') }
-      ]);
-    } else {
-      Alert.alert('Lỗi', response?.EM || 'Đã xảy ra lỗi, vui lòng thử lại');
-    }
+    // Trong ứng dụng thực tế, bạn sẽ gửi yêu cầu thay đổi mật khẩu đến server
+    // Ở đây chúng ta giả định đã thay đổi thành công
+    Alert.alert(
+      'Thành công',
+      'Mật khẩu của bạn đã được thay đổi thành công.',
+      [
+        {
+          text: 'Đăng nhập',
+          onPress: () => navigation.navigate('Login')
+        }
+      ]
+    );
   };
 
   return (
@@ -84,41 +62,11 @@ const ChangePasswordScreen = ({ navigation, route }) => {
 
       <ScrollView style={styles.content}>
         <View style={styles.card}>
-          <Text style={styles.title}>Đổi mật khẩu</Text>
+          <Text style={styles.title}>Tạo mật khẩu mới</Text>
           <Text style={styles.description}>
-            Vui lòng nhập mật khẩu cũ và mật khẩu mới cho tài khoản của bạn.
+            Vui lòng nhập mật khẩu mới cho tài khoản của bạn.
           </Text>
 
-          {/* Mật khẩu cũ */}
-          <View style={styles.inputContainer}>
-            <MaterialIcons name="lock-outline" size={24} color="#1565C0" style={styles.inputIcon} />
-            <View style={styles.textInputContainer}>
-              <Text style={styles.inputLabel}>Mật khẩu cũ</Text>
-              <View style={styles.textInputWrapper}>
-                <TextInput
-                  style={styles.textInput}
-                  value={oldPassword}
-                  onChangeText={setOldPassword}
-                  placeholder="Nhập mật khẩu cũ"
-                  secureTextEntry={!showOldPassword}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                />
-                <TouchableOpacity
-                  style={styles.passwordToggle}
-                  onPress={() => setShowOldPassword(!showOldPassword)}
-                >
-                  <MaterialIcons
-                    name={showOldPassword ? "visibility" : "visibility-off"}
-                    size={24}
-                    color="#757575"
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
-          {/* Mật khẩu mới */}
           <View style={styles.inputContainer}>
             <MaterialIcons name="lock" size={24} color="#1565C0" style={styles.inputIcon} />
             <View style={styles.textInputContainer}>
@@ -131,7 +79,6 @@ const ChangePasswordScreen = ({ navigation, route }) => {
                   placeholder="Nhập mật khẩu mới"
                   secureTextEntry={!showNewPassword}
                   autoCapitalize="none"
-                  autoCorrect={false}
                 />
                 <TouchableOpacity
                   style={styles.passwordToggle}
@@ -147,7 +94,6 @@ const ChangePasswordScreen = ({ navigation, route }) => {
             </View>
           </View>
 
-          {/* Xác nhận mật khẩu */}
           <View style={styles.inputContainer}>
             <MaterialIcons name="lock" size={24} color="#1565C0" style={styles.inputIcon} />
             <View style={styles.textInputContainer}>
@@ -160,7 +106,6 @@ const ChangePasswordScreen = ({ navigation, route }) => {
                   placeholder="Nhập lại mật khẩu mới"
                   secureTextEntry={!showConfirmPassword}
                   autoCapitalize="none"
-                  autoCorrect={false}
                 />
                 <TouchableOpacity
                   style={styles.passwordToggle}
@@ -183,6 +128,12 @@ const ChangePasswordScreen = ({ navigation, route }) => {
             <Text style={styles.changeButtonText}>XÁC NHẬN THAY ĐỔI</Text>
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={styles.backToLoginButton}
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text style={styles.backToLoginText}>Quay lại đăng nhập</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

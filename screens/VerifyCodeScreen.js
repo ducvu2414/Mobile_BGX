@@ -40,7 +40,7 @@ const VerifyCodeScreen = ({ route, navigation }) => {
     // Trong ứng dụng thực tế, bạn sẽ xác minh mã với server
     // Ở đây chúng ta giả định mã đúng là "123456"
     if (code === '123456') {
-      navigation.navigate('ChangePassword');
+      navigation.navigate('ForgotChangePassword');
     } else {
       Alert.alert('Thông báo', 'Mã xác nhận không đúng. Vui lòng thử lại.');
     }
@@ -93,7 +93,7 @@ const VerifyCodeScreen = ({ route, navigation }) => {
 
           <View style={styles.resendContainer}>
             <Text style={styles.resendText}>Không nhận được mã? </Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={handleResendCode}
               disabled={countdown > 0}
             >

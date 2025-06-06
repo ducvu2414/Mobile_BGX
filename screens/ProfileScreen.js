@@ -77,13 +77,13 @@ const ProfileScreen = ({ navigation }) => {
             color: '#4CAF50',
             screen: 'ParkingHistory'
         },
-        {
-            id: 'change-pin',
-            title: 'Đổi mã PIN',
-            icon: 'dialpad',
-            color: '#009688',
-            screen: 'ChangePin'
-        },
+        // {
+        //     id: 'change-pin',
+        //     title: 'Đổi mã PIN',
+        //     icon: 'dialpad',
+        //     color: '#009688',
+        //     screen: 'ChangePin'
+        // },
         {
             id: 'change-password',
             title: 'Đổi mật khẩu',
