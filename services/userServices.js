@@ -96,6 +96,34 @@ const updateUserBalance = (userEwalletId, amount) => {
     }
 }
 
+// Chuyển tiền
+const transferMoney = (data) => {
+    try {
+        return axios.post("/api/user/transferEwalletUser", { data });
+    } catch (error) {
+        console.log("Error at transferMoney in userServices: ", error);
+    }
+};
+
+// Check tài khoản có tồn tại hay không
+const checkAccountExist = (account) => {
+    console.log("account in checkAccountExist: ", account);
+    try {
+        return axios.post("/api/user/checkAccountExist", { account });
+    } catch (error) {
+        console.log("Error at checkAccountExist in userServices: ", error);
+    }
+};
+
+// Check mật khẩu có đúng hay không
+const checkPassword = (password) => {
+    try {
+        return axios.post("/api/user/checkPassword", { password });
+    } catch (error) {
+        console.log("Error at checkPassword in userServices: ", error);
+    }
+};
+
 export {
     loginUser,
     loginEmployee,
@@ -107,5 +135,8 @@ export {
     findTicketInPeriodOfTime,
     getAllParkingLots,
     getAllTicketUser,
-    updateUserBalance
+    updateUserBalance,
+    transferMoney,
+    checkAccountExist,
+    checkPassword,
 }

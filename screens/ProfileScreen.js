@@ -95,6 +95,7 @@ const ProfileScreen = ({ navigation }) => {
 
     const handleLogout = async () => {
         let data = await logoutUser();
+        console.log("data", data);
         AsyncStorage.clear();
         dispatch(logout());
         if (data && +data.EC === 1) {

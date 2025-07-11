@@ -38,6 +38,8 @@ import PromotionsScreen from '../screens/PromotionsScreen';
 import PromotionDetailScreen from '../screens/PromotionDetailScreen';
 import ParkingDetailScreen from '../screens/ParkingDetailScreen';
 import ForgotChangePasswordScreen from '../screens/ForgotChangePasswordScreen';
+import TransferScreen from '../screens/TransferScreen';
+import TransferSuccessScreen from '../screens/TransferSuccessScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -229,6 +231,8 @@ const AppNavigator = ({ promotions, announcements, parkingAreas }) => {
             <Stack.Screen name="ChangePin" component={ChangePinScreen} />
             <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
             <Stack.Screen name="Payment" component={PaymentScreen} />
+            <Stack.Screen name="Transfer" component={TransferScreen} />
+            <Stack.Screen name="TransferSuccess" component={TransferSuccessScreen} options={{ gestureEnabled: false }} />
             <Stack.Screen
               name="PaymentSuccess"
               component={PaymentSuccessScreen}

@@ -10,6 +10,8 @@ const instance = axios.create({
   baseURL: API_URL || 'http://192.168.1.3:1014',
 });
 
+console.log("API_URL", API_URL);
+
 instance.defaults.withCredentials = true;
 
 // 👉 Lấy token đúng lúc gửi request

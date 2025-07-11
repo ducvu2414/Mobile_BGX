@@ -118,10 +118,13 @@ const WalletScreen = ({ navigation }) => {
         return <MaterialIcons name="replay" size={16} color="white" />;
       case 'package':
         return <MaterialIcons name="local-offer" size={16} color="white" />;
+      case 'transfer':
+        return <MaterialIcons name="swap-horiz" size={16} color="white" />;
       default:
         return <MaterialIcons name="payment" size={16} color="white" />;
     }
   };
+
 
   // Hiển thị màu cho danh mục giao dịch
   const getCategoryColor = (category) => {
@@ -175,6 +178,7 @@ const WalletScreen = ({ navigation }) => {
           {[
             { icon: 'add', label: 'Nạp tiền', onPress: () => navigation.navigate('TopUp') },
             { icon: 'account-balance-wallet', label: 'Rút tiền', onPress: () => navigation.navigate('Withdraw') },
+            { icon: 'send', label: 'Chuyển tiền', onPress: () => navigation.navigate('Transfer') },
             { icon: 'payment', label: 'Thanh toán', onPress: () => navigation.navigate('Payment') }
           ].map((action, index) => (
             <TouchableOpacity key={index} style={styles.actionButton} onPress={action.onPress}>
