@@ -11,7 +11,7 @@ import {
     Alert
 } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
-
+import VnPayModal from '../components/VnPayModal';
 const TopUpScreen = ({ navigation }) => {
     const [amount, setAmount] = useState('');
     const [selectedMethod, setSelectedMethod] = useState(null);
@@ -44,6 +44,7 @@ const TopUpScreen = ({ navigation }) => {
     ];
 
     const quickAmounts = [100000, 200000, 500000, 1000000];
+    const [showModal, setShowModal] = useState(false);
 
     const handleTopUp = () => {
         if (!amount || parseInt(amount) < 10000) {
@@ -56,42 +57,9 @@ const TopUpScreen = ({ navigation }) => {
             return;
         }
 
-        // Xử lý nạp tiền
-        Alert.alert(
-            'Xác nhận',
-            `Bạn có chắc muốn nạp ${formatCurrency(amount)} từ ${selectedMethod.name}?`,
-            [
-                {
-                    text: 'Hủy',
-                    style: 'cancel',
-                },
-                {
-                    text: 'Xác nhận',
-                    onPress: () => {
-                        // Xử lý giao dịch nạp tiền
-                        Alert.alert('Thành công', 'Nạp tiền thành công!', [
-                            {
-                                text: 'OK',
-                                onPress: () =>
-                                    navigation.navigate('HomeStack',
-                                        {
-                                            screen: 'PaymentSuccess',
-                                            params: {
-                                                amount: parseInt(amount),
-                                                description: `Nạp tiền từ ${selectedMethod.name}`,
-                                                type: 'topup',
-                                                paymentMethod: selectedMethod.name,
-                                                date: new Date().toISOString()
-                                            }
-                                        }
-                                    ),
-                            },
-                        ]);
-                    },
-                },
-            ]
-        );
+        setShowModal(true);
     };
+
 
     const formatCurrency = (value) => {
         if (!value) return '0 đ';
@@ -99,99 +67,126 @@ const TopUpScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <StatusBar barStyle="light-content" backgroundColor="#1565C0" />
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Ionicons name="arrow-back" size={24} color="white" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Nạp tiền</Text>
-                <View style={{ width: 24 }} />
-            </View>
+        <>
+            <View style={styles.container}>
+                <StatusBar barStyle="light-content" backgroundColor="#1565C0" />
+                <View style={styles.header}>
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Ionicons name="arrow-back" size={24} color="white" />
+                    </TouchableOpacity>
+                    <Text style={styles.headerTitle}>Nạp tiền</Text>
+                    <View style={{ width: 24 }} />
+                </View>
 
-            <ScrollView style={styles.content}>
-                <View style={styles.amountContainer}>
-                    <Text style={styles.label}>Số tiền</Text>
-                    <TextInput
-                        style={styles.amountInput}
-                        placeholder="0 đ"
-                        keyboardType="numeric"
-                        value={amount}
-                        onChangeText={(text) => setAmount(text.replace(/[^0-9]/g, ''))}
-                    />
-                    <Text style={styles.minAmount}>Tối thiểu: 10.000 đ</Text>
+                <ScrollView style={styles.content}>
+                    <View style={styles.amountContainer}>
+                        <Text style={styles.label}>Số tiền</Text>
+                        <TextInput
+                            style={styles.amountInput}
+                            placeholder="0 đ"
+                            keyboardType="numeric"
+                            value={amount}
+                            onChangeText={(text) => setAmount(text.replace(/[^0-9]/g, ''))}
+                        />
+                        <Text style={styles.minAmount}>Tối thiểu: 10.000 đ</Text>
 
-                    <View style={styles.quickAmountContainer}>
-                        {quickAmounts.map((value) => (
-                            <TouchableOpacity
-                                key={value}
-                                style={[
-                                    styles.quickAmountButton,
-                                    parseInt(amount) === value && styles.quickAmountButtonActive,
-                                ]}
-                                onPress={() => setAmount(value.toString())}
-                            >
-                                <Text
+                        <View style={styles.quickAmountContainer}>
+                            {quickAmounts.map((value) => (
+                                <TouchableOpacity
+                                    key={value}
                                     style={[
-                                        styles.quickAmountText,
-                                        parseInt(amount) === value && styles.quickAmountTextActive,
+                                        styles.quickAmountButton,
+                                        parseInt(amount) === value && styles.quickAmountButtonActive,
                                     ]}
+                                    onPress={() => setAmount(value.toString())}
                                 >
-                                    {formatCurrency(value)}
-                                </Text>
+                                    <Text
+                                        style={[
+                                            styles.quickAmountText,
+                                            parseInt(amount) === value && styles.quickAmountTextActive,
+                                        ]}
+                                    >
+                                        {formatCurrency(value)}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </View>
+
+                    <View style={styles.methodContainer}>
+                        <Text style={styles.label}>Phương thức thanh toán</Text>
+
+                        {paymentMethods.map((method) => (
+                            <TouchableOpacity
+                                key={method.id}
+                                style={[
+                                    styles.methodItem,
+                                    selectedMethod?.id === method.id && styles.methodItemActive,
+                                ]}
+                                onPress={() => setSelectedMethod(method)}
+                            >
+                                <View style={[styles.methodIcon, { backgroundColor: method.color }]}>
+                                    <MaterialIcons name={method.icon} size={20} color="white" />
+                                </View>
+                                <View style={styles.methodInfo}>
+                                    <Text style={styles.methodName}>{method.name}</Text>
+                                    <Text style={styles.methodNumber}>{method.number}</Text>
+                                </View>
+                                {selectedMethod?.id === method.id && (
+                                    <MaterialIcons name="check-circle" size={24} color="#4CAF50" />
+                                )}
                             </TouchableOpacity>
                         ))}
-                    </View>
-                </View>
 
-                <View style={styles.methodContainer}>
-                    <Text style={styles.label}>Phương thức thanh toán</Text>
-
-                    {paymentMethods.map((method) => (
                         <TouchableOpacity
-                            key={method.id}
-                            style={[
-                                styles.methodItem,
-                                selectedMethod?.id === method.id && styles.methodItemActive,
-                            ]}
-                            onPress={() => setSelectedMethod(method)}
+                            style={styles.addMethodButton}
+                            onPress={() => navigation.navigate('AddPaymentMethod')}
                         >
-                            <View style={[styles.methodIcon, { backgroundColor: method.color }]}>
-                                <MaterialIcons name={method.icon} size={20} color="white" />
-                            </View>
-                            <View style={styles.methodInfo}>
-                                <Text style={styles.methodName}>{method.name}</Text>
-                                <Text style={styles.methodNumber}>{method.number}</Text>
-                            </View>
-                            {selectedMethod?.id === method.id && (
-                                <MaterialIcons name="check-circle" size={24} color="#4CAF50" />
-                            )}
+                            <MaterialIcons name="add" size={20} color="#1565C0" />
+                            <Text style={styles.addMethodText}>Thêm phương thức thanh toán</Text>
                         </TouchableOpacity>
-                    ))}
+                    </View>
+                </ScrollView>
 
+                <View style={styles.bottomContainer}>
                     <TouchableOpacity
-                        style={styles.addMethodButton}
-                        onPress={() => navigation.navigate('AddPaymentMethod')}
+                        style={[
+                            styles.topUpButton,
+                            (!amount || !selectedMethod) && styles.topUpButtonDisabled,
+                        ]}
+                        onPress={handleTopUp}
+                        disabled={!amount || !selectedMethod}
                     >
-                        <MaterialIcons name="add" size={20} color="#1565C0" />
-                        <Text style={styles.addMethodText}>Thêm phương thức thanh toán</Text>
+                        <Text style={styles.topUpButtonText}>Nạp tiền</Text>
                     </TouchableOpacity>
                 </View>
-            </ScrollView>
-
-            <View style={styles.bottomContainer}>
-                <TouchableOpacity
-                    style={[
-                        styles.topUpButton,
-                        (!amount || !selectedMethod) && styles.topUpButtonDisabled,
-                    ]}
-                    onPress={handleTopUp}
-                    disabled={!amount || !selectedMethod}
-                >
-                    <Text style={styles.topUpButtonText}>Nạp tiền</Text>
-                </TouchableOpacity>
             </View>
-        </View>
+
+            {selectedMethod && (
+                <VnPayModal
+                    visible={showModal}
+                    orderId={Math.floor(Math.random() * 1000000).toString()}
+                    amount={parseInt(amount)}
+                    orderInfo={`Nạp tiền từ ${selectedMethod.name}`}
+                    onClose={(result) => {
+                        setShowModal(false);
+                        console.log("Amount: ", amount);
+                        if (result?.success) {
+                            navigation.navigate('PaymentSuccess', {
+                                amount: parseInt(amount),
+                                description: `Nạp tiền từ ${selectedMethod.name}`,
+                                type: 'topup',
+                                paymentMethod: selectedMethod.name,
+                                date: new Date().toISOString()
+                            });
+                        } else {
+                            Alert.alert('Thanh toán thất bại', 'Vui lòng thử lại.');
+                        }
+                    }}
+                />
+            )}
+
+        </>
     );
 };
 

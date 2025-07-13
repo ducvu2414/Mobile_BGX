@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
+import VnPayModal from '../components/VnPayModal';
 
 const PaymentScreen = ({ navigation, route }) => {
   const user = useSelector(state => state.user);
@@ -32,6 +33,7 @@ const PaymentScreen = ({ navigation, route }) => {
   const [paymentType, setPaymentType] = useState(route.params?.type || 'general');
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [selectedPackage, setSelectedPackage] = useState(null);
+  const [showVnPay, setShowVnPay] = useState(false);
 
   const walletBalance = userInfo.balance;
 
@@ -143,13 +145,12 @@ const PaymentScreen = ({ navigation, route }) => {
               {
                 text: 'OK',
                 onPress: () => navigation.navigate('PaymentSuccess', {
-                  amount: parseInt(amount),
-                  description: note,
-                  type: paymentType,
-                  packageName: selectedPackage?.name,
-                  paymentMethod: selectedPaymentMethod.name,
-                  date: new Date().toISOString()
-                }),
+                  amount: 100000,
+                  description: 'Nạp tiền từ VietinBank',
+                  type: 'topup',
+                  paymentMethod: 'VietinBank',
+                  date: '2025-07-11T08:48:09.260Z'
+                })
               },
             ]);
           },

@@ -38,36 +38,31 @@ const PaymentSuccessScreen = ({ navigation, route }) => {
         return {
           title: 'Nạp tiền thành công',
           icon: 'add-circle-outline',
-          color: '#4CAF50',
-          amountPrefix: '+'
+          color: '#4CAF50'
         };
       case 'withdraw':
         return {
           title: 'Rút tiền thành công',
           icon: 'remove-circle-outline',
-          color: '#FF9800',
-          amountPrefix: '-'
+          color: '#FF9800'
         };
       case 'membership':
         return {
           title: 'Thanh toán gói thành viên thành công',
           icon: 'card-membership',
-          color: '#1565C0',
-          amountPrefix: '-'
+          color: '#1565C0'
         };
       case 'promotion':
         return {
           title: 'Thanh toán khuyến mãi thành công',
           icon: 'local-offer',
-          color: '#E91E63',
-          amountPrefix: '-'
+          color: '#E91E63'
         };
       default:
         return {
           title: 'Thanh toán thành công',
           icon: 'check-circle-outline',
-          color: '#1565C0',
-          amountPrefix: '-'
+          color: '#1565C0'
         };
     }
   };
@@ -78,7 +73,7 @@ const PaymentSuccessScreen = ({ navigation, route }) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1565C0" />
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('HomeMain')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Main')}>
           <Ionicons name="close" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Chi tiết giao dịch</Text>
@@ -90,7 +85,7 @@ const PaymentSuccessScreen = ({ navigation, route }) => {
           <MaterialIcons name={transactionInfo.icon} size={60} color={transactionInfo.color} />
           <Text style={styles.successTitle}>{transactionInfo.title}</Text>
           <Text style={[styles.successAmount, { color: transactionInfo.color }]}>
-            {transactionInfo.amountPrefix}{formatCurrency(amount)}
+            {formatCurrency(amount)}
           </Text>
         </View>
 
@@ -124,7 +119,7 @@ const PaymentSuccessScreen = ({ navigation, route }) => {
       <View style={styles.bottomContainer}>
         <TouchableOpacity
           style={styles.homeButton}
-          onPress={() => navigation.navigate('HomeMain')}
+          onPress={() => navigation.navigate('Main')}
         >
           <Text style={styles.homeButtonText}>Về trang chủ</Text>
         </TouchableOpacity>

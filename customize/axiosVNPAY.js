@@ -4,13 +4,13 @@ import {
   Alert
 } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_URL } from '@env';
+import { VNPAY_URL } from '@env';
 
 const instance = axios.create({
-  baseURL: API_URL || 'http://192.168.1.3:1014',
+  baseURL: VNPAY_URL,
+  timeout: 10000,
 });
 
-console.log("API_URL 1", API_URL);
 
 instance.defaults.withCredentials = true;
 

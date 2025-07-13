@@ -91,16 +91,15 @@ const WithdrawScreen = ({ navigation }) => {
                             {
                                 text: 'OK',
                                 onPress: () =>
-                                    navigation.navigate('HomeStack',
+                                    navigation.navigate(
+                                        'PaymentSuccess',
                                         {
-                                            screen: 'PaymentSuccess',
-                                            params: {
-                                                amount: parseInt(amount),
-                                                description: `Rút tiền về tài khoản ${selectedMethod.name}`,
-                                                type: 'withdraw',
-                                                paymentMethod: selectedMethod.name,
-                                                date: new Date().toISOString()
-                                            }
+                                            amount: parseInt(amount),
+                                            description: `Rút tiền về tài khoản ${selectedMethod.name}`,
+                                            type: 'withdraw',
+                                            paymentMethod: selectedMethod.name,
+                                            date: new Date().toISOString()
+
                                         }
                                     ),
                             },
