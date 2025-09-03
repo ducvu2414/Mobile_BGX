@@ -46,7 +46,18 @@ const ParkingHistoryScreen = ({ navigation }) => {
             location: 'Bãi C - Ký túc xá',
             vehicle: 'motorcycle',
             fee: 5000,
-            status: 'completed'
+            status: 'uncompleted'
+        },
+        {
+            id: 4,
+            date: '07/03/2025',
+            timeIn: '07:45',
+            timeOut: '18:00',
+            duration: '10h 15m',
+            location: 'Bãi C - Ký túc xá',
+            vehicle: 'motorcycle',
+            fee: 5000,
+            status: 'uncompleted'
         }
     ]);
 

@@ -115,10 +115,12 @@ const ProfileScreen = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#1565C0" />
             <View style={styles.header}>
+                <View style={styles.headerContent}>
                 <Text style={styles.headerTitle}>Tài khoản</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
-                    <Ionicons name="notifications-outline" size={24} color="white" />
-                </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
+                    <Ionicons name="notifications" size={24} color="white" />
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <ScrollView style={styles.content}>
@@ -237,13 +239,19 @@ const styles = StyleSheet.create({
         backgroundColor: '#1565C0',
         paddingTop: 40,
         paddingBottom: 20,
-        paddingHorizontal: 16,
+        paddingHorizontal: 20,
+    },
+    headerContent: {
+        flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: 'center',
     },
     headerTitle: {
         color: 'white',
         fontSize: 18,
         fontWeight: '600',
+        flex: 1,
+        textAlign: 'center',
     },
     content: {
         flex: 1,

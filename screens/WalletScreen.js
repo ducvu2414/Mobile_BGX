@@ -17,14 +17,23 @@ import {
   MaterialCommunityIcons
 } from '@expo/vector-icons';
 import { CommonActions } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 const { width } = Dimensions.get('window');
 
 const WalletScreen = ({ navigation }) => {
-  const [walletInfo] = useState({
-    balance: 256000,
-    points: 150,
-  });
+  const user = useSelector(state => state.user);
+  const userInfo = user.userData.userData || {
+    userCode: '',
+    name: '',
+    phoneNumber: '',
+    email: '',
+    gender: true,
+    dateOfBirth: '',
+    address: '',
+    role: '',
+    balance: 0
+  };
 
   const [transactions] = useState([
     {
@@ -150,9 +159,6 @@ const WalletScreen = ({ navigation }) => {
   const renderHeader = () => (
     <View style={styles.header}>
       <View style={styles.headerContent}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
         <Text style={styles.headerTitle}>Ví điện tử</Text>
         <TouchableOpacity onPress={() => navigation.navigate('WalletSettings')}>
           <Ionicons name="settings-outline" size={24} color="white" />
@@ -167,12 +173,12 @@ const WalletScreen = ({ navigation }) => {
         <View style={styles.balanceHeader}>
           <View>
             <Text style={styles.balanceLabel}>Số dư hiện tại</Text>
-            <Text style={styles.balanceAmount}>{formatCurrency(walletInfo.balance)}</Text>
+            <Text style={styles.balanceAmount}>{formatCurrency(userInfo.balance)}</Text>
           </View>
-          <View style={styles.pointsContainer}>
+          {/* <View style={styles.pointsContainer}>
             <MaterialCommunityIcons name="star-circle" size={24} color="#FFC107" />
             <Text style={styles.pointsText}>{walletInfo.points} điểm</Text>
-          </View>
+          </View> */}
         </View>
         <View style={styles.actionsContainer}>
           {[
@@ -333,8 +339,8 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#1565C0',
     paddingTop: 40,
-    paddingBottom: 50,
-    paddingHorizontal: 50,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
   },
   headerContent: {
     flexDirection: 'row',
@@ -345,10 +351,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
   },
   balanceCardContainer: {
     paddingHorizontal: 16,
-    marginTop: -20,
+    marginTop: 20,
   },
   balanceCard: {
     backgroundColor: 'white',

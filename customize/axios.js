@@ -20,7 +20,16 @@ instance.interceptors.request.use(async (config) => {
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`;
   }
+  try {
+    const url = new URL(config.baseURL || API_URL);
+    const origin = `${url.protocol}//${url.hostname}:8081`;
+    config.headers['Origin'] = origin;
+  } catch (e) {
+    // fallback cho dev
+    config.headers['Origin'] = 'http://localhost:8385';
+  }
   return config;
+
 }, (error) => {
   return Promise.reject(error);
 });

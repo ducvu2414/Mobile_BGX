@@ -42,7 +42,7 @@ const HomePage = ({ navigation, promotions, announcements, parkingAreas }) => {
   }, []);
 
   const handleRegisterParking = useCallback(() => {
-    navigation.navigate('ParkingHistory');
+    navigation.navigate('Home', { screen: 'ParkingHistory' });
   }, [navigation]);
 
   const handleFeaturePress = useCallback((featureId) => {
@@ -51,7 +51,7 @@ const HomePage = ({ navigation, promotions, announcements, parkingAreas }) => {
         navigation.navigate('Membership');
         break;
       case 'parking-history':
-        navigation.navigate('ParkingHistory');
+        navigation.navigate('Home', { screen: 'ParkingHistory' });
         break;
       case 'wallet':
         navigation.navigate('Wallet');

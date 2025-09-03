@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -9,15 +9,15 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import { MaterialIcons, Ionicons } from '@expo/vector-icons';
-import { CommonActions, useNavigation } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { login } from '../redux/slice/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginEmployee, loginUser } from '../services/userServices';
+import { loginUser } from '../services/userServices';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { BackHandler } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { TextInput } from 'react-native';
 
 const LoginScreen = ({ navigation }) => {
   const user = useSelector(state => state.user);
@@ -201,9 +201,6 @@ const LoginScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
-// Thêm import TextInput
-import { TextInput } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {

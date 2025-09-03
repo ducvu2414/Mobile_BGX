@@ -43,7 +43,7 @@ const ParkingHistoryDetailScreen = ({ route, navigation }) => {
       case 'ongoing':
         return '#2196F3';
       default:
-        return '#9E9E9E';
+        return '#F44336';
     }
   };
 
@@ -55,7 +55,7 @@ const ParkingHistoryDetailScreen = ({ route, navigation }) => {
       case 'ongoing':
         return 'Đang đỗ xe';
       default:
-        return 'Không xác định';
+        return 'Chưa thanh toán';
     }
   };
 
@@ -64,10 +64,9 @@ const ParkingHistoryDetailScreen = ({ route, navigation }) => {
     try {
       const message = `
         Thông tin đỗ xe:
-        Biển số: ${parkingRecord.vehicleNumber}
-        Bãi đỗ: ${parkingRecord.parkingArea}
-        Thời gian vào: ${parkingRecord.entryTime} ${parkingRecord.entryDate}
-        ${parkingRecord.exitTime ? `Thời gian ra: ${parkingRecord.exitTime} ${parkingRecord.exitDate}` : ''}
+        Bãi đỗ: ${parkingRecord.location}
+        Thời gian vào: ${parkingRecord.timeIn} ${parkingRecord.date}
+        ${parkingRecord.timeOut ? `Thời gian ra: ${parkingRecord.timeOut} ${parkingRecord.date}` : ''}
         ${parkingRecord.duration ? `Thời gian đỗ: ${parkingRecord.duration}` : ''}
         ${parkingRecord.fee ? `Phí đỗ xe: ${formatCurrency(parkingRecord.fee)}` : ''}
       `;
@@ -128,20 +127,12 @@ const ParkingHistoryDetailScreen = ({ route, navigation }) => {
         </View>
 
         <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View style={styles.vehicleInfo}>
-              {getVehicleIcon(parkingRecord.vehicleType)}
-              <Text style={styles.vehicleNumber}>{parkingRecord.vehicleNumber}</Text>
-            </View>
-          </View>
-
-          <View style={styles.divider} />
 
           <View style={styles.infoSection}>
             <Text style={styles.sectionTitle}>Thông tin bãi đỗ</Text>
             <View style={styles.infoRow}>
               <MaterialIcons name="location-on" size={20} color="#757575" />
-              <Text style={styles.infoText}>{parkingRecord.parkingArea}</Text>
+              <Text style={styles.infoText}>{parkingRecord.location}</Text>
             </View>
           </View>
 
@@ -153,7 +144,7 @@ const ParkingHistoryDetailScreen = ({ route, navigation }) => {
               <MaterialIcons name="login" size={20} color="#757575" />
               <View>
                 <Text style={styles.infoLabel}>Thời gian vào:</Text>
-                <Text style={styles.infoText}>{parkingRecord.entryTime} - {parkingRecord.entryDate}</Text>
+                <Text style={styles.infoText}>{parkingRecord.timeIn} - {parkingRecord.date}</Text>
               </View>
             </View>
             
@@ -162,7 +153,7 @@ const ParkingHistoryDetailScreen = ({ route, navigation }) => {
                 <MaterialIcons name="logout" size={20} color="#757575" />
                 <View>
                   <Text style={styles.infoLabel}>Thời gian ra:</Text>
-                  <Text style={styles.infoText}>{parkingRecord.exitTime} - {parkingRecord.exitDate}</Text>
+                  <Text style={styles.infoText}>{parkingRecord.timeOut} - {parkingRecord.date}</Text>
                 </View>
               </View>
             )}
@@ -180,13 +171,13 @@ const ParkingHistoryDetailScreen = ({ route, navigation }) => {
 
           <View style={styles.infoSection}>
             <Text style={styles.sectionTitle}>Thanh toán</Text>
-            {parkingRecord.paymentMethod ? (
+            {parkingRecord.status === 'completed' ? (
               <>
                 <View style={styles.infoRow}>
                   <MaterialIcons name="payment" size={20} color="#757575" />
                   <View>
-                    <Text style={styles.infoLabel}>Phương thức thanh toán:</Text>
-                    <Text style={styles.infoText}>{parkingRecord.paymentMethod}</Text>
+                    <Text style={styles.infoLabel}>Trạng thái:</Text>
+                    <Text style={styles.payedText}>{getStatusText(parkingRecord.status)}</Text>
                   </View>
                 </View>
                 <View style={styles.infoRow}>
@@ -196,11 +187,12 @@ const ParkingHistoryDetailScreen = ({ route, navigation }) => {
                     <Text style={styles.feeText}>{formatCurrency(parkingRecord.fee)}</Text>
                   </View>
                 </View>
+                
               </>
             ) : (
               <View style={styles.infoRow}>
                 <MaterialIcons name="info" size={20} color="#757575" />
-                <Text style={styles.infoText}>Chưa thanh toán</Text>
+                <Text style={styles.unpayedText}>Chưa thanh toán</Text>
               </View>
             )}
           </View>
@@ -308,6 +300,18 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 14,
     color: '#212121',
+    marginLeft: 12,
+  },
+  payedText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'green',
+    marginLeft: 12,
+  },
+  unpayedText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'red',
     marginLeft: 12,
   },
   feeText: {
