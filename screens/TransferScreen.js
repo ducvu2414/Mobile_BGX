@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -8,11 +8,9 @@ import {
   TouchableOpacity,
   StatusBar,
   TextInput,
-  Alert,
-  Image
 } from 'react-native';
-import { MaterialIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { useSelector } from 'react-redux';
+import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { useDispatch, useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import {
   transferMoney,
@@ -20,6 +18,8 @@ import {
   checkPassword,
 } from "../services/userServices";
 import { Modal } from 'react-native';
+import { fetchUserAccount } from '../redux/slice/userSlice';
+import { NOTIFICATION_URL } from '@env';
 
 const TransferScreen = ({ navigation, route }) => {
   const user = useSelector(state => state.user);
@@ -27,6 +27,7 @@ const TransferScreen = ({ navigation, route }) => {
   const [password, setPassword] = useState('');
   const [recipientId, setRecipientId] = useState("");
   const [amount, setAmount] = useState("");
+  const dispatch = useDispatch();
 
   const userInfo = user.userData.userData || {
     userCode: '',
@@ -49,9 +50,6 @@ const TransferScreen = ({ navigation, route }) => {
   };
 
   const handleTransfer = () => {
-    console.log("Người gửi:", user?.userData?.userData?.userCode);
-    console.log("Chuyển tiền đến:", recipientId);
-    console.log("Mô tả:", description);
 
     // Kiểm tra xem người nhận có tồn tại không
     if (!recipientId || recipientId.trim() === "") {
@@ -96,7 +94,6 @@ const TransferScreen = ({ navigation, route }) => {
 
     checkAccountExist(recipientId)
       .then((response) => {
-        console.log("Kết quả kiểm tra tài khoản:", response);
 
         const { EC, EM, DT } = response || {};
 
@@ -124,13 +121,9 @@ const TransferScreen = ({ navigation, route }) => {
 
   const processTransfer = (parsedAmount, password) => {
     const senderId = user?.userData?.userData?.userCode;
-    console.log("account", senderId);
-    console.log("password", password);
-    console.log("parsedAmount", parsedAmount);
 
     checkPassword({ userCode: senderId, password: password })
       .then((response) => {
-        console.log("Kết quả kiểm tra mật khẩu:", response);
         const { EC, EM } = response || {};
 
         if (EC !== 1) {
@@ -178,7 +171,7 @@ const TransferScreen = ({ navigation, route }) => {
               // Gửi tất cả thông báo song song
               Promise.all(
                 notifications.map((noti) =>
-                  fetch("http://localhost:3001/api/notifications", {
+                  fetch(NOTIFICATION_URL, {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
@@ -204,6 +197,8 @@ const TransferScreen = ({ navigation, route }) => {
                   description: description,
                   date: new Date().toISOString(),
                 });
+
+                dispatch(fetchUserAccount());
               });
             } else {
               Toast.show({

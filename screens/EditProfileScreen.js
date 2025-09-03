@@ -7,6 +7,7 @@ import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser, updateCurrentUser } from '../services/userServices';
 import Toast from 'react-native-toast-message';
+import { fetchUserAccount } from '../redux/slice/userSlice';
 
 const EditProfileScreen = ({ navigation }) => {
   const user = useSelector(state => state.user);
@@ -16,6 +17,8 @@ const EditProfileScreen = ({ navigation }) => {
   const [email, setEmail] = useState(userInfo.email || '');
   const [phoneNumber, setPhoneNumber] = useState(userInfo.phoneNumber || '');
   const [password, setPassword] = useState('');
+
+  const dispatch = useDispatch();
 
   const handleSave = async () => {
     // Validate
@@ -57,12 +60,11 @@ const EditProfileScreen = ({ navigation }) => {
       const res = await updateCurrentUser(updatedUser);
       if (res && res.EC === 1) {
         
-        Alert.alert('Thành công', 'Cập nhật thành công. Bạn sẽ được đăng xuất.', [
+        Alert.alert('Thành công', 'Cập nhật thành công.', [
           {
             text: 'OK',
             onPress: async () => {
-              await logoutUser();
-              navigation.replace('Login');
+              dispatch(fetchUserAccount());
             }
           }
         ]);

@@ -17,7 +17,7 @@ const VnPayModal = ({ visible, orderId, amount, orderInfo, onClose }) => {
         language: "vn",
         platform: "mobile"
     });
-    const baseURL = `${PAYMENT_URL}/order/create_payment_url`;
+    const baseURL = `${PAYMENT_URL}/order/create_payment_url_v2`;
     useEffect(() => {
         if (!visible) return;
 

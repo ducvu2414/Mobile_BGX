@@ -15,7 +15,6 @@ export const fetchUserAccount = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             let response = await getUserAccount()
-            // console.log('response: ', response.EC);
             if (response && response.EC === 1) {
                 let groupWithRoles = response.DT.groupWithRoles
                 let userData = response.DT
@@ -27,8 +26,6 @@ export const fetchUserAccount = createAsyncThunk(
                     userData: userData,
                     isLoading: false
                 }
-                console.log('userData in server: ', userData);
-                console.log('data in context: ', data);
                 return data
             }
             else {   //ko co nguoi dung
@@ -44,11 +41,9 @@ export const updateBalance = createAsyncThunk(
     'user/updateBalance',
     async ({ ewalletId, amount }, { rejectWithValue }) => {
         try {
-            console.log('data: ', ewalletId, amount);
 
             const response = await updateUserBalance(ewalletId, amount);
             if (response && response.EC === 1) {
-                console.log('res: ', response);
 
                 return response.DT;  // Trả về dữ liệu user mới sau khi cập nhật balance
             } else {
@@ -95,7 +90,6 @@ export const userSlice = createSlice({
             //cap nhat so du
             .addCase(updateBalance.fulfilled, (state, action) => {
                 const amount = action.meta.arg.amount; // lấy amount từ input của thunk
-                console.log('log add from .addCase: ', amount);
 
                 if (typeof state.userData.userData.balance === 'number') {
                     state.userData.userData.balance += parseInt(amount); // cộng thêm số tiền vừa nạp

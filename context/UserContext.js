@@ -24,9 +24,7 @@ const UserProvider = ({ children })=>{
     }
 
     const fetchUser = async ()=>{
-        // console.log('run into context');
         let response = await getUserAccount()
-        // console.log('response: ', response.EC);
         if(response && response.EC === 1){
             let groupWithRoles = response.DT.groupWithRoles
             let userData = response.DT
@@ -38,8 +36,6 @@ const UserProvider = ({ children })=>{
                 userData: userData,
                 isLoading: false
             }
-            // console.log('userData in server: ', userData);
-            // console.log('data in context: ', data);
             setUser(data)
         }
         else{   //ko co nguoi dung

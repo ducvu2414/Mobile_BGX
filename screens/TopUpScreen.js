@@ -170,7 +170,6 @@ const TopUpScreen = ({ navigation }) => {
                     orderInfo={`Nạp tiền từ ${selectedMethod.name}`}
                     onClose={(result) => {
                         setShowModal(false);
-                        console.log("Amount: ", amount);
                         if (result?.success) {
                             navigation.navigate('PaymentSuccess', {
                                 amount: parseInt(amount),

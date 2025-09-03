@@ -2,7 +2,6 @@ import { template } from "lodash";
 import axios from "../customize/axios";
 
 const handleForgotPwd = (data) => {
-  // console.log("data", data);
   try {
     return axios.post("/api/forgotPassword", data);
   } catch (error) {

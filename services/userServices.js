@@ -75,7 +75,6 @@ const getAllParkingLots = () => {
 
 const getAllTicketUser = (data) => {
     try {
-        // console.log('data in axios srvec: ', data);
         let userCode = data.userData.userData.userCode
         let userId = data.userData.userData.userId
         return axios.get('/api/user/getAllTicketUser/', {

@@ -20,7 +20,6 @@ import { useDispatch } from 'react-redux'
 const ProfileScreen = ({ navigation }) => {
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
-    // console.log("User: ", user.userData.userData);
 
     const userInfo = user.userData.userData || {
         userCode: '',
@@ -95,7 +94,6 @@ const ProfileScreen = ({ navigation }) => {
 
     const handleLogout = async () => {
         let data = await logoutUser();
-        console.log("data", data);
         AsyncStorage.clear();
         dispatch(logout());
         if (data && +data.EC === 1) {

@@ -9,10 +9,15 @@ import {
   ScrollView
 } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
+import { useDispatch } from 'react-redux';
+import { fetchUserAccount } from '../redux/slice/userSlice';
 
 const PaymentSuccessScreen = ({ navigation, route }) => {
   const { amount, description, type, paymentMethod, date, vehicle } = route.params;
-
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchUserAccount());
+  }, [dispatch]);
   // Format currency
   const formatCurrency = (value) => {
     if (!value) return '0 đ';
