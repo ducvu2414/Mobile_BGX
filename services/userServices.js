@@ -88,8 +88,6 @@ const getAllTicketUser = (data) => {
 
 const updateUserBalance = (userEwalletId, amount) => {
     try {
-        console.log('data EwalletId: ', userEwalletId);
-        console.log('data balance: ', amount);
         return axios.put('/api/user/updateUserBalance', { userEwalletId, amount });
     } catch (error) {
         console.log('Error at updateUserBalance in userServices: ', error);

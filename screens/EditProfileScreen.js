@@ -4,7 +4,7 @@ import {
   StatusBar, TextInput, ScrollView, Image, Alert
 } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser, updateCurrentUser } from '../services/userServices';
 import Toast from 'react-native-toast-message';
 
@@ -19,9 +19,9 @@ const EditProfileScreen = ({ navigation }) => {
 
   const handleSave = async () => {
     // Validate
-    const emailRegex = /^[a-zA-Z0-9._%+-]{5,16}@gmail\.com$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]{5,}@gmail\.com$/;
     const phoneRegex = /^0\d{9}$/;
-    const passwordRegex = /^.{7,16}$/;
+    const passwordRegex = /^.{7,}$/;
     if (!name.trim() || !email.trim() || !phoneNumber.trim() || !password.trim()) {
       Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ thông tin và xác minh bằng mật khẩu');
       Toast.show({
@@ -55,7 +55,8 @@ const EditProfileScreen = ({ navigation }) => {
       };
 
       const res = await updateCurrentUser(updatedUser);
-      if (res && res.EC === 0) {
+      if (res && res.EC === 1) {
+        
         Alert.alert('Thành công', 'Cập nhật thành công. Bạn sẽ được đăng xuất.', [
           {
             text: 'OK',

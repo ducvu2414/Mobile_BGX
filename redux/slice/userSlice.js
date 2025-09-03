@@ -27,8 +27,8 @@ export const fetchUserAccount = createAsyncThunk(
                     userData: userData,
                     isLoading: false
                 }
-                // console.log('userData in server: ', userData);
-                // console.log('data in context: ', data);
+                console.log('userData in server: ', userData);
+                console.log('data in context: ', data);
                 return data
             }
             else {   //ko co nguoi dung
@@ -79,7 +79,7 @@ export const userSlice = createSlice({
         builder
             .addCase(fetchUserAccount.pending, (state, action) => {
                 state.isLoading = true
-                state.isAuthenticated = false
+                // state.isAuthenticated = false
             })
             .addCase(fetchUserAccount.fulfilled, (state, action) => {
                 state.isAuthenticated = action.payload.isAuthenticated

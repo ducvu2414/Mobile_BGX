@@ -15,13 +15,6 @@ const App = () => {
     { id: 4, name: 'Bãi D - Nhà thi đấu', total: 180, available: 85, isReserved: false }
   ], []);
 
-  const studentInfo = useMemo(() => ({
-    id: 'SV123456',
-    name: 'Nguyễn Văn A',
-    class: 'DHKT',
-    hasParking: true
-  }), []);
-
   const promotions = useMemo(() => [
     {
       id: 1,
@@ -78,45 +71,6 @@ const App = () => {
       iconColor: '#4CAF50'
     }
   ], []);
-
-  const walletInfo = useMemo(() => ({
-    balance: 250000,
-    pendingTopup: false,
-    transactions: [
-      {
-        id: 1,
-        type: 'expense',
-        amount: 5000,
-        description: 'Phí gửi xe ngày 09/03/2025',
-        date: '09/03/2025',
-        time: '08:15'
-      },
-      {
-        id: 2,
-        type: 'topup',
-        amount: 100000,
-        description: 'Nạp tiền qua MoMo',
-        date: '05/03/2025',
-        time: '14:30'
-      },
-      {
-        id: 3,
-        type: 'expense',
-        amount: 25000,
-        description: 'Phí gửi xe tuần (01/03 - 05/03)',
-        date: '01/03/2025',
-        time: '07:45'
-      },
-      {
-        id: 4,
-        type: 'topup',
-        amount: 150000,
-        description: 'Nạp tiền qua ngân hàng',
-        date: '28/02/2025',
-        time: '16:20'
-      }
-    ]
-  }), []);
 
   return (
     <Provider store={store}>

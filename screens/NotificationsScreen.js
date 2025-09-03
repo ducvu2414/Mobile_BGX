@@ -10,10 +10,11 @@ import {
   Alert
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import io from 'socket.io-client';
 import { NOTIFICATION_URL } from '@env';
 import axios from 'axios';
+import { fetchUserAccount } from '../redux/slice/userSlice';
 
 const NotificationsScreen = ({ navigation }) => {
   const user = useSelector(state => state.user);
@@ -23,6 +24,8 @@ const NotificationsScreen = ({ navigation }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const socketRef = useRef(null);
+
+  const dispatch = useDispatch();
 
   /** ---------- Helpers: dedupe / upsert / sort ---------- */
   const dedupeById = (arr) => {
@@ -89,6 +92,7 @@ const NotificationsScreen = ({ navigation }) => {
         }
         return sortByCreatedAtDesc(merged);
       });
+      dispatch(fetchUserAccount());
     });
 
     // Cleanup khi unmount / đổi userCode
@@ -140,7 +144,7 @@ const NotificationsScreen = ({ navigation }) => {
 
   const markAllAsRead = async () => {
     try {
-      const baseURL = `${NOTIFICATION_URL}/api/notifications//mark-all-read/${userCode}`;
+      const baseURL = `${NOTIFICATION_URL}/api/notifications/mark-all-read/${userCode}`;
       await axios.put(baseURL);
       setNotifications(prev => prev.map(item => ({ ...item, isRead: true })));
       setUnreadCount(0);
